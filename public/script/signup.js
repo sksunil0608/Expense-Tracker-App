@@ -20,28 +20,24 @@ async function signup(event) {
     if(response.status == 201){
         window.location.href = "../views/login.html"
     }
-    
     else{
         throw new Error("Failed to Login")
     }
     }
     catch(err){
+        let error;
         if (err.response.status == 409) {
-            var myElement = document.getElementById('error-area');
-            var errorAlert = document.createElement('div');
-            errorAlert.innerHTML = `<div class="alert alert-danger" role="alert">
-                    <p>User Already Exist! Please Login.</p>
-             </div>`
-            myElement.insertBefore(errorAlert, myElement.firstChild);
+            error = "User Already Exist! Please Login.";
         }
         else{
+            error=err;
+        }
         var myElement = document.getElementById('error-area');
         var errorAlert = document.createElement('div');
-        errorAlert.innerHTML =`<div class="alert alert-danger" role="alert">
-                    <p>${err}</p>
+        errorAlert.innerHTML =`<div class="border border-danger rounded bg-danger text-white">
+                    <p>${error}</p>
              </div>`
         myElement.insertBefore(errorAlert, myElement.firstChild);
-    }
     }
 
 }

@@ -1,20 +1,26 @@
 const User = require('../models/users')
 
+function isValidString(str){
+ return (str==undefined || str.length==0)?true:false
+ 
+}
 exports.postSignUp = async (req,res)=>{
     try{
-        const newName = req.body.name;
-        const newEmail = req.body.email;
-        const newPass = req.body.password;
-
+        const {name:newName,email:newEmail,password:newPass} = req.body;
+        
+        if(isValidString(newName) || isValidString(newEmail)||isValidString(newName)){
+            return res.status(400).json({err:"Bad Parameters, Please fill details carefully"})
+        }
         //Existing User Validation
         const existingUser = await User.findAll({where:{email:newEmail}})
+
         if(existingUser.length ==0){
             const user = await User.create({
                 name: newName,
                 email: newEmail,
                 password: newPass
             })
-            res.status(201).json({Success:"User Created Successfully"})
+            return res.status(201).json({Success:"User Created Successfully"})
         }
         else{
             console.log("User Already Exist")

@@ -25,17 +25,17 @@ async function signup(event) {
     }
     }
     catch(err){
-        let error;
+        let message;
         if (err.response.status == 409) {
-            error = "User Already Exist! Please Login.";
+            message = "User Already Exist! Please Login.";
         }
         else{
-            error=err;
+            message=err;
         }
         var myElement = document.getElementById('error-area');
         var errorAlert = document.createElement('div');
         errorAlert.innerHTML =`<div class="border border-danger rounded bg-danger text-white">
-                    <p>${error}</p>
+                    <p class="m-2">${message}</p>
              </div>`
         myElement.insertBefore(errorAlert, myElement.firstChild);
     }

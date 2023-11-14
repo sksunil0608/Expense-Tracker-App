@@ -13,29 +13,48 @@ async function login(event) {
         }
         const response = await axios.post('http://localhost:3000/login', loginDetails);
         clearInputBox();
-        if (response.status = 201) {
+        console.log(response.status)
+        if (response.status === 201) {
             window.location.href = "../views/index.html"
         }
-        else {
-            throw new Error("Failed to Login")
+        else{
+            let message;
+            if (response.status === 204) {
+                message = "User Does Not Exist! Please Create a Account."
+            }
+            else {
+                throw new Error("Failed to Login")
+            }
+
+            var myElement = document.getElementById('error-area');
+            var errorAlert = document.createElement('div');
+            errorAlert.innerHTML = `<div class="text-danger">
+                    <strong><p class="m-2">${message}</p></strong>
+             </div>`
+            myElement.insertBefore(errorAlert, myElement.firstChild);
         }
+        
+        
+        
     }
     catch (err) {
-        err = {response:{ status: 401 }}; 
-        let error;
-        if(err.response.status==204){
-            error = "User Does Not Exist! Please SignUp"
+        let message;
+        if(err.response.status===401){
+            message= "Authentication Error! Password Does Not Match."
         }
-        else if(err.response.status==401){
-            error= "Authentication Error! Password Does Not Match."
+        else if (err.response.status ===400) {
+            message = "You have not filled all the details correctly."
         }
-
+        else {
+            message = "Bad Parameters, Something Went Wrong."
+        }
+        
         var myElement = document.getElementById('error-area');
-        var erroAlert = document.createElement('div');
-        erroAlert.innerHTML = `<div class="text-danger">
-                    <strong><p class="m-2">${error}</p></strong>
+        var errorAlert = document.createElement('div');
+        errorAlert.innerHTML = `<div class="text-danger">
+                    <strong><p class="m-2">${message}</p></strong>
              </div>`
-        myElement.insertBefore(erroAlert, myElement.firstChild);
+        myElement.insertBefore(errorAlert, myElement.firstChild);
     }
 
 }

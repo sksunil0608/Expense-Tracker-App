@@ -1,5 +1,5 @@
 const User = require('../models/users')
-
+const bcrypt =require('bcrypt')
 function isInValidString(str){
  return (str==undefined || str.length==0)?true:false
  
@@ -15,12 +15,22 @@ exports.postSignUp = async (req,res)=>{
         const existingUser = await User.findAll({where:{email:newEmail}})
 
         if(existingUser.length ==0){
-            const user = await User.create({
-                name: newName,
-                email: newEmail,
-                password: newPass
+            
+            const saltrounds = 10;
+            bcrypt.hash(newPass, saltrounds, async (err, hash) => {
+                if (!err) {
+                    const user = await User.create({
+                        name: newName,
+                        email: newEmail,
+                        password: hash
+                    })
+                    return res.status(201).json({ Success: "User Created Successfully" })
+                }
+                else {
+                    console.log("Error")
+                    throw new Error("Some Error Occured")
+                }
             })
-            return res.status(201).json({Success:"User Created Successfully"})
         }
         else{
             console.log("User Already Exist")
@@ -47,16 +57,25 @@ exports.postLogin = async(req,res)=>{
             return res.status(204).json({Error:"User Does Not Exist! Please Create a Account."})
         }
         else{
-            if(existingUser[0].password === userPass){
-                console.log("Successful Login")
-                return res.status(201).json({success:"Successful Login"})
-            }
-            else{
-                return res.status(401).json({ Error: "Authentication Error! Password Does Not Match."})
-            }
+            bcrypt.compare(userPass,existingUser[0].password,(err,result)=>{
+                
+                if(err){
+                   throw new Error("Error Login") 
+                }
+                else{
+                    if(result){
+                        console.log("Successful Login")
+                        return res.status(201).json({ success: "Successful Login" })
+                    }
+                    else{
+                        return res.status(401).json({ Error: "Authentication Error! Password Does Not Match." })
+                    }
+                    }
+                }
+            )
         }
     }
     catch(err){
-        // res.status(400).json({ Error: "Bad Parameters, Something Went Wrong." })
+        res.status(400).json({ Error: "Bad Parameters, Something Went Wrong." })
     }
 }

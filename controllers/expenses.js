@@ -66,7 +66,17 @@ exports.postEditExpense = async (req, res, next) => {
 };
 
 exports.deleteExpenses = async (req, res, next) => {
-  const expenseId = req.params.expenseId;
-  await Expense.destroy({ where: { id: expenseId } });
-  res.json({ status: "Deleted Successfully" });
+  try{
+    const expenseId = req.params.expenseId;
+    const result = await Expense.destroy({ where: { id: expenseId, userId: req.user.id } });
+
+    if (result === 0) {
+      return res.status(404).json({ Error: "Nothing Found!!" })
+    }
+    res.json({ status: "Deleted Successfully" });
+  }
+  catch(err){
+    return res.status(404).json({ Error: "Nothing Found!!" })
+  }
+  
 };

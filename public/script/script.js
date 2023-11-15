@@ -18,7 +18,6 @@ function clearInputBox(){
     document.querySelector("#expenseCat").value = "";
 }
 
-
 //Function to Show Expenses
 function showAllExpenses(response){
     const data = response.data.allExpenses;

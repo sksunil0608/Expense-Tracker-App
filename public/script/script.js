@@ -8,7 +8,9 @@ expenseTrackerButton.onclick =function(){
 // Form DOM
 form = document.getElementById('expenseForm');
 form.addEventListener("submit",createExpense);
-getExpenses();
+
+window.addEventListener('DOMContentLoaded', getExpenses)
+
 
 function clearInputBox(){
     document.querySelector('#expenseDesc').value='';
@@ -84,8 +86,9 @@ function showEditExpense(response) {
   showAddedExpense(response);
 }
 async function getExpenses(){
+    const token = localStorage.getItem('token')
     try{
-        const response = await axios.get("http://localhost:3000/all-expenses");
+        const response = await axios.get("http://localhost:3000/all-expenses", { headers: { "Authorization": token } });
         showAllExpenses(response)
     }catch(err){
         console.log(err)
@@ -98,20 +101,26 @@ async function createExpense(event){
     const expenseName = event.target.expenseDesc.value;
     const price = event.target.expenseAmount.value;
     const category = event.target.expenseCat.value;
-    
+    const token = localStorage.getItem('token')
+    const header = { headers: { "Authorization": token } }
     const obj = {
         expenseName,
         price,
-        category
+        category,
     }
     
     try{
-        const response = await axios.post("http://localhost:3000/add-expense",obj);
+        const response = await axios.post("http://localhost:3000/add-expense",obj,header);
         showAddedExpense(response);
         clearInputBox();
     }
     catch(err){
-        console.log(err)
+        var myElement = document.getElementById('error-area');
+        var errorAlert = document.createElement('div');
+        errorAlert.innerHTML = `<div class="text-danger">
+                    <strong><p class="m-2">${err}</p></strong>
+             </div>`
+        myElement.insertBefore(errorAlert, myElement.firstChild)
     }
 }
 
@@ -121,7 +130,9 @@ function removeDeletedExpenseUI(id) {
 //function to Delete
 async function deleteExpense(expenseId){
     try{
-        const response = await axios.delete(`http://localhost:3000/delete/${expenseId}`);
+        const token = localStorage.getItem('token')
+        const header = { headers: { "Authorization": token } }
+        const response = await axios.delete(`http://localhost:3000/delete/${expenseId}`,header);
         removeDeletedExpenseUI(expenseId);
     }catch(err){
         console.log(err)
@@ -136,7 +147,9 @@ function showInputDataOnEditpage(response) {
 }
 //Function to Edit
 async function updateExpense(expenseId){
-    const response = await axios.get(`http://localhost:3000/expense/${expenseId}`);
+    const token = localStorage.getItem('token')
+    const header = { headers: { "Authorization": token } }
+    const response = await axios.get(`http://localhost:3000/expense/${expenseId}`,header);
     showInputDataOnEditpage(response);
 
   const update_btn = document.createElement("div");
@@ -159,9 +172,11 @@ async function updateExpense(expenseId){
     };
 
     try {
+        const token = localStorage.getItem('token')
+        const header = { headers: { "Authorization": token } }
       const response = await axios.put(
-        `http://localhost:3000/edit/${expenseId}`,
-        obj
+        `http://localhost:3000/edit/${expenseId},`,
+        obj,header
       );
       showEditExpense(response);
       clearInputBox();

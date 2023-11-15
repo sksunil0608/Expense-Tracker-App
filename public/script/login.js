@@ -13,8 +13,8 @@ async function login(event) {
         }
         const response = await axios.post('http://localhost:3000/login', loginDetails);
         clearInputBox();
-        console.log(response.status)
         if (response.status === 201) {
+            localStorage.setItem('token',response.data.token)
             window.location.href = "../views/index.html"
         }
         else{

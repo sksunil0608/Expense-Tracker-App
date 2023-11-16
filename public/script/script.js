@@ -75,7 +75,10 @@ function showAllExpenses(response){
                                 Edit
                             </button>`;
         })
+
     }
+
+    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense}`
 }
 
 function showAddedExpense(response){

@@ -35,7 +35,7 @@ async function showLeaderboard(){
         const cell2 = newRow.insertCell(1);
 
         cell1.innerHTML = user.name;
-        cell2.innerHTML = user.total_expense!=null?user.total_expense:0;
+        cell2.innerHTML = user.totalExpenses!=null?user.totalExpenses:0;
     });
 
 

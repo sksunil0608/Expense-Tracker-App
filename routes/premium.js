@@ -8,7 +8,6 @@ router.get("/buy-premium",UserAuth.authenticate,premiumController.getBuyPremium)
 
 router.post("/transaction-status",UserAuth.authenticate,premiumController.postTransactionStatus);
 
-router.post("/check-premium-user",UserAuth.authenticate,premiumController.isPremiumUser);
 
 
 

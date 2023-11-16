@@ -11,13 +11,36 @@ form.addEventListener("submit",createExpense);
 
 window.addEventListener('DOMContentLoaded', getExpenses)
 
+function parseJwt(token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+}
+
 
 function clearInputBox(){
     document.querySelector('#expenseDesc').value='';
     document.querySelector('#expenseAmount').value='';
     document.querySelector("#expenseCat").value = "";
 }
-
+function premiumUserUI() {
+    document.getElementById('normal-user-area').remove();
+    const premium_user_msg = document.createElement('div')
+    premium_user_msg.innerHTML = `
+    <strong><p class="text-success text-center">
+    Hi ${'SUNIL'},
+    Thanks For Using Our Expense Tracker App. 
+    You are already a Premium User.
+    <br>
+    <button class="btn btn-success rounded m-3" id="show-leaderboard" onclick="showLeaderboard()">Leaderboard</button>
+    </p></strong>
+    `
+    document.getElementById('premium-user-area').appendChild(premium_user_msg)
+}
 //Function to Show Expenses
 function showAllExpenses(response){
     const data = response.data.allExpenses;
@@ -87,6 +110,11 @@ function showEditExpense(response) {
 async function getExpenses(){
     const token = localStorage.getItem('token')
     try{
+        const decodedToken = parseJwt(token)
+        const isPremium = decodedToken.isPremiumUser
+        if(isPremium){
+            premiumUserUI();
+        }
         const response = await axios.get("http://localhost:3000/all-expenses", { headers: { "Authorization": token } });
         showAllExpenses(response)
     }catch(err){
@@ -185,4 +213,18 @@ async function updateExpense(expenseId){
   }
 }
 
+
+const logout_button = document.getElementById('logout')
+logout_button.onclick = async function logout(e) {
+    try{
+        e.preventDefault();
+        const token = localStorage.getItem('token')
+        await axios.get('http://localhost:3000/logout',{headers:{"Authorization":token}})
+        localStorage.removeItem('token')
+        window.location.href = '../views/login.html'
+
+    }catch(err){
+        console.log(err)
+    }
+}
 

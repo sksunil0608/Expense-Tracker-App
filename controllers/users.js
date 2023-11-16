@@ -1,13 +1,12 @@
 const User = require('../models/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { isPremiumUser } = require('./premium')
 
 function isInValidString(str) {
     return (str == undefined || str.length == 0) ? true : false
 
 }
-exports.postSignUp = async (req, res) => {
+const postSignUp = async (req, res) => {
     try {
         const { name: newName, email: newEmail, password: newPass } = req.body;
 
@@ -46,12 +45,17 @@ exports.postSignUp = async (req, res) => {
 
 }
 
-function generateAccessToken(id,name,isPremium) {
-    return jwt.sign({ userId: id, name: name,isPremiumUser:isPremium }, 'secretkey')
+const generateAccessToken = (id,name,isPremium) =>{
+    const tokenValues = {
+        userId: id,
+        name: name,
+        isPremiumUser: isPremium,
+    };
+    return jwt.sign(tokenValues, 'secretkey')
 }
 
 
-exports.postLogin = async (req, res) => {
+const postLogin = async (req, res) => {
     try {
         const { email: userEmail, password: userPass } = req.body;
 
@@ -86,3 +90,16 @@ exports.postLogin = async (req, res) => {
         res.status(400).json({ Error: "Bad Parameters, Something Went Wrong." })
     }
 }
+
+const logout = async (req,res)=>{
+    try{
+        // const user =await User.findByPk(req.user.id);
+        // user.isPremiumUser = false;
+        // await user.save();
+        res.status(201).json({success:"Logged Out"})
+    }catch(err){
+        res.status(400).json({ Error: "Bad Parameters, Something Went Wrong." })
+    }
+}
+
+module.exports = {postSignUp,generateAccessToken,postLogin,logout};

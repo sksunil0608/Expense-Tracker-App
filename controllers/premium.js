@@ -1,9 +1,7 @@
 require('dotenv').config();
 const Razorpay = require('razorpay');
 const Order = require('../models/orders');
-const User = require('../models/users')
-const Expense = require('../models/expenses')
-
+const userController = require('.//users')
 exports.getBuyPremium = async (req,res,next)=>{
     try{
         if(req.user.isPremiumUser==true){
@@ -44,10 +42,11 @@ exports.postTransactionStatus =async(req,res)=>{
         const userPromise = order_info.update({payment_id:payment_id, status:"SUCCESS"}); 
         const transPromise =  req.user.update({isPremiumUser:true})
         const [trans_info,user_info] = await Promise.all([userPromise,transPromise])
-
-        return res.status(202).json({ success:"Transaction Successful" })
+        
+        return res.status(202).json({ success: "Transaction Successful", token: userController.generateAccessToken(req.user.id, req.user.name, true) })
     }
     catch(err){
+        console.log(err)
         const order_info = await Order.findOne({ where: { order_id: order_id } })
         await order_info.update({ payment_id: payment_id, status: "FAILED" })
         
@@ -55,15 +54,3 @@ exports.postTransactionStatus =async(req,res)=>{
     }
 }
 
-exports.isPremiumUser =async (req,res)=>{
-    try{
-        const token = req.body.token;
-        const userExist = await User.findByPk(req.user.id);
-        if(userExist.isPremiumUser==true){
-            return res.status(201).json({success: "Success"})
-        }
-    }catch(err){
-        console.log(err)
-        res.status(404).json({ Error: "Something Went Wrong!! Try to login" })
-    }
-}

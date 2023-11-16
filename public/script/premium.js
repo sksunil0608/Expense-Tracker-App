@@ -2,24 +2,6 @@ const buy_premium = document.getElementById('rzp-buy-premium');
 
 buy_premium.addEventListener('click', getBuyPremium);
 
-window.addEventListener('DOMContentLoaded',checkPremiumUser);
-
-
-function premiumUserUI() {
-    document.getElementById('normal-user-area').remove();
-    const premium_user_msg = document.createElement('div')
-    premium_user_msg.innerHTML = `
-    <strong><p class="text-success text-center">
-    Hi ${'SUNIL'},
-    Thanks For Using Our Expense Tracker App. 
-    You are already a Premium User.
-    <br>
-    <button class="btn btn-success rounded m-3" id="show-leaderboard" onclick="showLeaderboard()">Leaderboard</button>
-    </p></strong>
-    `
-    document.getElementById('premium-user-area').appendChild(premium_user_msg)
-}
-
 async function showLeaderboard(){
     const token =localStorage.getItem('token')
     const response = await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}});
@@ -53,26 +35,11 @@ async function showLeaderboard(){
         const cell2 = newRow.insertCell(1);
 
         cell1.innerHTML = user.name;
-        cell2.innerHTML = user.total_expense;
+        cell2.innerHTML = user.total_expense!=null?user.total_expense:0;
     });
 
 
     
-}
-
-async function checkPremiumUser(event) {
-    try {
-        event.preventDefault();
-        const token = localStorage.getItem('token')
-        const premium_user = await axios.post('http://localhost:3000/check-premium-user', 
-        { 'token': token }, { headers: { "Authorization": token } })
-        if(premium_user){
-            premiumUserUI();
-            // showLeaderboard();
-        }
-    } catch (err) {
-        console.log(err)
-    }
 }
 
 async function getBuyPremium(event) {
@@ -94,6 +61,7 @@ async function getBuyPremium(event) {
                     if(transResponse.status ==202){
                         premiumUserUI();
                     }
+                    
                     localStorage.setItem('token',transResponse.data.token)
                 
             }

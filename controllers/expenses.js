@@ -1,6 +1,6 @@
 const Expense = require("../models/expenses");
 const userController = require('../controllers/users');
-
+const sequelize = require('../util/database')
 function isInValidString(str) {
   return (str == undefined || str.length == 0) ? true : false
 
@@ -17,6 +17,8 @@ exports.getExpenses = async (req, res, next) => {
 };
 
 exports.postAddExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
+
   const expenseName = req.body.expenseName;
   const price = req.body.price;
   const category = req.body.category;
@@ -29,8 +31,9 @@ exports.postAddExpense = async (req, res, next) => {
       expenseName: expenseName,
       price: price,
       category: category,
-      userId:req.user.id
-    });
+      userId:req.user.id},
+      {transaction:t}
+      );
 
     const userTotalExpense = await req.user.totalExpenses
     if( userTotalExpense === 0 || userTotalExpense === null){
@@ -40,7 +43,9 @@ exports.postAddExpense = async (req, res, next) => {
       req.user.totalExpenses = req.user.totalExpenses + + price
     }
 
-    await req.user.save()
+    await req.user.save({transaction:t})
+
+    await t.commit(); 
 
     res.json({
       allExpenses: {
@@ -50,23 +55,25 @@ exports.postAddExpense = async (req, res, next) => {
         category: response.category,
 } });
   } catch (err) {
-    console.log(err);
+    await t.rollback();
+    res.status(500).json({ Error: "Internal Server Error" });
   }
 };
 
 exports.postEditExpense = async (req, res, next) => {
+  const t = await sequelize.transaction();
   const expenseId = req.params.expenseId;
   const expenseName = req.body.expenseName;
   const price = req.body.price;
   const category = req.body.category;
   try {
     
-    const expenses = await Expense.findAll({where:{userId:req.user.id}});
+    const expenses = await Expense.findAll({where:{userId:req.user.id},transaction:t});
     if(req.user.id !=expenses[0].userId){
       return res.status(401).json({ Error: "Authentication Error!!" })
     }
 
-    const response = await Expense.findByPk(expenseId);
+    const response = await Expense.findByPk(expenseId,{transaction:t});
 
     // Save the current price before updating the expense
     const previousPrice = response.price;
@@ -75,7 +82,7 @@ exports.postEditExpense = async (req, res, next) => {
     response.price = price;
     response.category = category;
 
-    await response.save();
+    await response.save({transaction:t});
 
     // Subtract the previous price from totalExpenses
     req.user.totalExpenses -= previousPrice;
@@ -83,27 +90,30 @@ exports.postEditExpense = async (req, res, next) => {
     // Add the new price to totalExpenses
     req.user.totalExpenses = req.user.totalExpenses + + price;
 
-    await req.user.save();
-
+    await req.user.save({transaction:t});
+    await t.commit();
     res.json({ allExpenses: response });
   } catch (err) {
+    await t.rollback();
     return res.status(500).json({ Error: "Internal Server Error" });
   }
 };
 
 exports.deleteExpenses = async (req, res, next) => {
+  const t = await sequelize.transaction();
     try {
         const expenseId = req.params.expenseId;
         const expense = await Expense.findAll({
             attributes: ['id', 'price'],
-            where: { id: expenseId, userId: req.user.id }
+            where: { id: expenseId, userId: req.user.id },
+            transaction:t
         });
 
         if (!expense || expense.length === 0) {
             return res.status(404).json({ Error: "Expense not found" });
         }
 
-        const result = await expense[0].destroy();
+        const result = await expense[0].destroy({transaction:t});
 
         if (result === 0) {
             return res.status(404).json({ Error: "Nothing Found!!" });
@@ -113,11 +123,11 @@ exports.deleteExpenses = async (req, res, next) => {
             req.user.totalExpenses -= expense[0].price;
         }
 
-        await req.user.save();
-
+        await req.user.save({transaction:t});
+        await t.commit();
         res.json({ status: "Deleted Successfully" });
     } catch (err) {
-        console.log(err);
+        await t.rollback();
         return res.status(500).json({ Error: "Internal Server Error" });
     }
 };

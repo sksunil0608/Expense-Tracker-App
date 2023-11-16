@@ -19,9 +19,11 @@ app.use(express.static(path.join(__dirname, 'public')))
 const expenseRoutes = require('./routes/expenses')
 const userRoutes = require('./routes/users')
 const premiumRoutes = require('./routes/premium')
+const premiumFeatureRoutes = require('./routes/premiumFeatures')
 app.use(expenseRoutes);
 app.use(userRoutes);
 app.use(premiumRoutes);
+app.use(premiumFeatureRoutes)
 
 
 User.hasMany(Expense);

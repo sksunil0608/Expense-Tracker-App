@@ -1,6 +1,7 @@
 const User = require('../models/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const { isPremiumUser } = require('./premium')
 
 function isInValidString(str) {
     return (str == undefined || str.length == 0) ? true : false
@@ -45,8 +46,8 @@ exports.postSignUp = async (req, res) => {
 
 }
 
-function generateAccessToken(id,name) {
-    return jwt.sign({ userId: id, name: name }, 'secretkey')
+function generateAccessToken(id,name,isPremium) {
+    return jwt.sign({ userId: id, name: name,isPremiumUser:isPremium }, 'secretkey')
 }
 
 
@@ -71,7 +72,7 @@ exports.postLogin = async (req, res) => {
                 }
                 else {
                     if (result) {
-                        return res.status(201).json({ success: "Successful Login", token: generateAccessToken(existingUser[0].id,existingUser[0].name) })
+                        return res.status(201).json({ success: "Successful Login", token: generateAccessToken(existingUser[0].id,existingUser[0].name,existingUser[0].isPremiumUser) })
                     }
                     else {
                         return res.status(401).json({ Error: "Authentication Error! Password Does Not Match." })

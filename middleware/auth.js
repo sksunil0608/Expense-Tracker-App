@@ -8,8 +8,6 @@ const authenticate = async (req,res,next)=>{
         const user = await User.findByPk(newUser.userId);
         // console.log(JSON.stringify(user))
         req.user = user;
-
-
         next();
     }
     catch(err){

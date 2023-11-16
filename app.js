@@ -20,10 +20,12 @@ const expenseRoutes = require('./routes/expenses')
 const userRoutes = require('./routes/users')
 const premiumRoutes = require('./routes/premium')
 const premiumFeatureRoutes = require('./routes/premiumFeatures')
+const emailRoutes = require('./routes/email')
 app.use(expenseRoutes);
 app.use(userRoutes);
 app.use(premiumRoutes);
 app.use(premiumFeatureRoutes)
+app.use(emailRoutes)
 
 
 User.hasMany(Expense);

@@ -1,5 +1,4 @@
 const Expense = require("../models/expenses");
-const userController = require('../controllers/users');
 const sequelize = require('../util/database')
 function isInValidString(str) {
   return (str == undefined || str.length == 0) ? true : false

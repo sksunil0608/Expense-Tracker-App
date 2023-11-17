@@ -34,9 +34,10 @@ function premiumUserUI() {
     <strong><p class="text-success text-center">
     Hi ${'SUNIL'},
     Thanks For Using Our Expense Tracker App. 
-    You are already a Premium User.
-    <br>
-    <button class="btn btn-success rounded m-3" id="show-leaderboard" onclick="showLeaderboard()">Leaderboard</button>
+    You are already a Premium User.    
+    `
+    document.getElementById('premium-user-area-button').innerHTML=`
+        <button class="btn btn-success rounded w-100 mb-2 mb-md-0" onclick="showLeaderboard()">Leaderboard</button>
     </p></strong>
     `
     document.getElementById('premium-user-area').appendChild(premium_user_msg)
@@ -78,7 +79,7 @@ function showAllExpenses(response){
 
     }
 
-    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense}`
+    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense||0}`
 }
 
 function showAddedExpense(response){

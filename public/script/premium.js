@@ -5,7 +5,7 @@ buy_premium.addEventListener('click', getBuyPremium);
 async function showLeaderboard(){
     const token =localStorage.getItem('token')
     const response = await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}});
-
+    
     const leaderboard_area = document.createElement('div');
     document.getElementById('premium-user-area').appendChild(leaderboard_area);
     leaderboard_area.innerHTML = `

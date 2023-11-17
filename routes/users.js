@@ -9,6 +9,5 @@ router.post('/login',userController.postLogin)
 
 router.get('/logout',UserAuth.authenticate,userController.logout);
 
-router.post('/password/forgotpassword', userController.postForgotPassword)
 
 module.exports = router

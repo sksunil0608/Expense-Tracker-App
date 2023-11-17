@@ -1,6 +1,7 @@
-const User = require('../models/users')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+
+const User = require('../models/users')
 
 
 function isInValidString(str) {
@@ -103,16 +104,5 @@ const logout = async (req,res)=>{
     }
 }
 
-const postForgotPassword = async (req, res) => {
-    try {
-        const email = req.body.email;
-        console.log(email)
-        res.status(200).json({ success: "True" })
-    }
-    catch (err) {
-        res.status(500).json({ Error: "Internal Server Error" })
-    }
 
-}
-
-module.exports = {postSignUp,generateAccessToken,postLogin,logout,postForgotPassword};
+module.exports = {postSignUp,generateAccessToken,postLogin,logout};

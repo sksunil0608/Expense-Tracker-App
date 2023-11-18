@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
+    "aws-sdk": "^2.1499.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",

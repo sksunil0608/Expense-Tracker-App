@@ -3,6 +3,9 @@ const UserAuth = require('../middleware/auth')
 const express = require('express');
 
 const router = express.Router();
+router.get('/user/download', UserAuth.authenticate, expenseController.downloadReport);
+
+router.get('/user/download-history',UserAuth.authenticate,expenseController.getAllDownloadHistory)
 
 router.get('/all-expenses',UserAuth.authenticate,expenseController.getExpenses);
 
@@ -13,5 +16,7 @@ router.post("/add-expense", UserAuth.authenticate, expenseController.postAddExpe
 router.delete("/delete/:expenseId", UserAuth.authenticate,expenseController.deleteExpenses);
 
 router.put('/edit/:expenseId', UserAuth.authenticate, expenseController.postEditExpense)
+
+
 
 module.exports = router;

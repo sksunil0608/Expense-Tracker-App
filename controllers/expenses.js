@@ -1,8 +1,46 @@
 const Expense = require("../models/expenses");
 const sequelize = require('../util/database')
+const UserService = require('../services/userservices')
+const S3Service = require('../services/S3Services')
+
 function isInValidString(str) {
   return (str == undefined || str.length == 0) ? true : false
+}
 
+exports.downloadReport = async (req,res)=>{
+  const t= await sequelize.transaction();
+  try{
+    const expenses = await UserService.getExpenses(req)
+    const stringifiedExpense = JSON.stringify(expenses)
+    const fileName = `Expense-${req.user.name}`
+    const fileType = `.txt`;
+    const filePath = `${fileName}/${new Date()}${fileType}`
+    const fileURL = await S3Service.uploadtoS3(stringifiedExpense,filePath);
+
+    await req.user.createDownloadLog({
+      fileName: fileName,
+      filePath: filePath,
+      fileURL: fileURL,
+      fileType:fileType},
+      {transaction:t}
+      )
+    await t.commit();
+    res.status(201).json({fileURL:fileURL})
+
+  }catch(err){
+    await t.rollback();
+    console.log(err)
+    res.status(401).json({"Authorization Errror":"User is not authorized to Download"})
+  }
+}
+
+exports.getAllDownloadHistory = async (req,res)=>{
+    try{
+      const response = await req.user.getDownloadLogs();
+      res.status(201).json({downloadHistory:response})
+    }catch(err){
+      res.status(500).json({ Error: "Internal Server Error" });
+    }
 }
 exports.getExpense = async (req, res, next) => {
   const expenseId = req.params.expenseId;

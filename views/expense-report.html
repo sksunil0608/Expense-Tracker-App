@@ -10,7 +10,6 @@
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -28,16 +27,16 @@
             </ul>
         </div>
     </nav>
-    <div class="container text-center user-area mt-3" id="user-area">
+    <div class="container text-center user-area mt-3">
 
         <div class="row align-items-start">
             <div class="col-md-4 col-sm-12" id="">
-                <a href="../views/expense-report.html"> <button
-                        class="btn btn-success rounded w-100 mb-2 mb-md-0">Expense
-                        Report</button></a>
+                <button class="btn btn-success rounded w-100 mb-2 mb-md-0" onclick="download_report()">Download
+                    Report</button>
             </div>
             <div class="col-md-4 col-sm-12" id="premium-user-area-button">
-                <button class="btn btn-success rounded w-100 mb-2 mb-md-0" id="rzp-buy-premium">Buy Premium</button>
+                <button class="btn btn-success rounded w-100 mb-2 mb-md-0" onclick="download_history()">Download
+                    History</button>
             </div>
             <div class="col-md-2 col" id="">
                 <p class="" id="total-expense"></p>
@@ -53,6 +52,8 @@
         <p>
         <p class="text-info" id="currentDate"></p>
         </p>
+    </div>
+    <div class="d-none" id="download-report">
         <div class="container pt-5 text-center">
             <h4 class="">2021</h4>
             <h5 class="mt-3">March 2021</h5>
@@ -113,14 +114,79 @@
                 </div>
             </div>
         </div>
-        <div class="m-5">
-            <button class="mb-5" style="float: right;">Download Report</button>
+    </div>
+
+    <div id="download-history" class="d-none">
+        <div class="container pt-5 text-center">
+            <h4 class="">2021</h4>
+            <h5 class="mt-3">Download History</h5>
+            <div class="container border border-black border-1 pt-3">
+                <div class="container">
+                    <table class="table table-striped" id="download-history-table">
+                        <thead class="table-info" id="download-history-table-head">
+                            <tr>
+                                <th scope="col">File Name</th>
+                                <th scope="col">File URL</th>
+                                <th scope="col">Download Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="download-history-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+
     <script>
         var currentDate = new Date();
         var formattedDate = currentDate.toDateString();
         document.getElementById("currentDate").innerHTML = "Current Date: " + formattedDate;
+
+        async function download_report() {
+            try {
+                const token = localStorage.getItem('token')
+                const response = await axios.get('http://localhost:3000/user/download', { headers: { "Authorization": token } })
+                if (response.status === 201) {
+                    var download_link = document.createElement('a')
+                    download_link.href = response.data.fileURL
+                    download_link.download = 'expense.csv'
+                    download_link.click();
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        async function download_history() {
+            try {
+
+                const token = localStorage.getItem('token')
+                const response = await axios.get('http://localhost:3000/user/download-history', { headers: { "Authorization": token } })
+                if (response.status === 201) {
+                    const data = response.data.downloadHistory
+                    document.getElementById('download-history').classList.remove('d-none');
+                    const table = document.getElementById('download-history-table');
+                    data.forEach((i) => {
+                        // Create a new row
+                        var tableBody = document.getElementById("download-history-table-body");
+                        var newRow = tableBody.insertRow();
+                        newRow.id = i.id;
+
+                        // Insert cells into the row
+                        var cell1 = newRow.insertCell(0);
+                        var cell2 = newRow.insertCell(1);
+                        var cell3 = newRow.insertCell(2);
+
+                        cell1.innerHTML = i.fileName + '-' + i.updatedAt
+                        cell2.innerHTML = `<a href=${i.fileURL}>${i.fileURL.substring(0, 30) + '...'}</a>`
+                        cell3.innerHTML = i.updatedAt;
+                    })
+
+                }
+            } catch (err) {
+                console.log(err)
+            }
+        }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

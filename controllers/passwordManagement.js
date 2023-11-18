@@ -4,7 +4,7 @@ const path = require('path')
 
 const ForgotPassword = require('../models/forgotPassword')
 const User = require('../models/users')
-const email = require('../helper/email')
+const email = require('../services/email')
 
 const postForgotPassword = async (req, res) => {
     try {

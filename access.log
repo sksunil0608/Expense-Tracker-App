@@ -1,1 +1,8 @@
 ::1 - - [18/Nov/2023:20:36:22 +0000] "GET /all-expenses?page=3&itemsPerPage=5 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:05 +0000] "GET /all-expenses?page=3&itemsPerPage=5 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:07 +0000] "GET /all-expenses?page=2&itemsPerPage=5 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:08 +0000] "GET /all-expenses?page=1&itemsPerPage=5 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:14 +0000] "GET /user/download-history HTTP/1.1" 201 22 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:22 +0000] "GET /user/download HTTP/1.1" 201 175 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:27 +0000] "GET /user/download-history HTTP/1.1" 201 467 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+::1 - - [18/Nov/2023:23:01:35 +0000] "GET /all-expenses?page=1&itemsPerPage=5 HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"

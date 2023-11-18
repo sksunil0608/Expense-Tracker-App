@@ -4,7 +4,7 @@
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set NODE_ENV=production&& set PORT=3000&& set HOST_NAME=localhost&& set DB_NAME=expense-tracker&& set DB_USER=root&& set DB_PASSWORD=root&& node app.js",
+    "start": "nodemon app.js",
     "start:dev": "nodemon app.js",
     "start-server": "node app.js"
   },

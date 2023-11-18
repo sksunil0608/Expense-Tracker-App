@@ -11,7 +11,7 @@ form.addEventListener("submit",createExpense);
 
 window.addEventListener('DOMContentLoaded', ()=>{
     const currentPage = sessionStorage.getItem('currentPage') || 1;
-    const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage');
+    const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage') || 5;
     getExpenses(currentPage,selectedItemsPerPage);
 })
 
@@ -117,7 +117,7 @@ function showEditExpense(response) {
   document.getElementById(`${response.data.allExpenses.id}`).remove();
   showAddedExpense(response);
 }
-async function getExpenses(page=1,itemsPerPage=5){
+async function getExpenses(page,itemsPerPage){
     const token = localStorage.getItem('token')
     try{
         const decodedToken = parseJwt(token)
@@ -257,7 +257,7 @@ function updatePaginationControls(response) {
         const button = document.createElement('button');
         button.textContent = i;
         button.classList.add('btn', 'btn-outline-secondary','btn-sm', 'm-2')
-        button.addEventListener('click', () => getExpenses(i));
+        button.addEventListener('click', () => getExpenses(i, sessionStorage.getItem('itemsPerPage')));
 
         if (i === parseInt(sessionStorage.getItem('currentPage'))) {
             button.classList.add('active');
@@ -268,7 +268,7 @@ function updatePaginationControls(response) {
 }
 
 function itemsPerPageDropdown (selectedValue){
-    const selectedItemsPerPage = parseInt(selectedValue);
+    const selectedItemsPerPage = selectedValue;
     const currentPage = 1
     getExpenses(currentPage, selectedItemsPerPage);
 }

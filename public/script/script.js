@@ -11,7 +11,8 @@ form.addEventListener("submit",createExpense);
 
 window.addEventListener('DOMContentLoaded', ()=>{
     const currentPage = sessionStorage.getItem('currentPage') || 1;
-    getExpenses(currentPage);
+    const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage');
+    getExpenses(currentPage,selectedItemsPerPage);
 })
 
 function parseJwt(token) {
@@ -116,7 +117,7 @@ function showEditExpense(response) {
   document.getElementById(`${response.data.allExpenses.id}`).remove();
   showAddedExpense(response);
 }
-async function getExpenses(page=1){
+async function getExpenses(page=1,itemsPerPage=5){
     const token = localStorage.getItem('token')
     try{
         const decodedToken = parseJwt(token)
@@ -126,9 +127,11 @@ async function getExpenses(page=1){
         }
         // Store the current page in local storage
         sessionStorage.setItem('currentPage', page);
+        sessionStorage.setItem('itemsPerPage', itemsPerPage);
 
-        const response = await axios.get(`http://localhost:3000/all-expenses?page=${page}`, { headers: { "Authorization": token } });
-        updatePaginationControls(response, page)
+        const response = await axios.get(`http://localhost:3000/all-expenses?page=${page}&itemsPerPage=${itemsPerPage}`, { headers: { "Authorization": token } });
+        updatePaginationControls(response)
+        
     }catch(err){
         console.log(err)
     }
@@ -240,7 +243,7 @@ logout_button.onclick = async function logout(e) {
     }
 }
 
-function updatePaginationControls(response, currentPage) {
+function updatePaginationControls(response) {
     var tableBody = document.getElementById("table-body");
     tableBody.innerHTML = '';
     showAllExpenses(response)
@@ -248,15 +251,24 @@ function updatePaginationControls(response, currentPage) {
     const paginationContainer = document.getElementById('pagination-container');
     paginationContainer.innerHTML = ''; // Clear existing buttons
 
-
+    
     for (let i = 1; i <= totalPages; i++) {
+        
         const button = document.createElement('button');
         button.textContent = i;
-        button.classList.add('btn', 'btn-secondary', 'm-2')
+        button.classList.add('btn', 'btn-outline-secondary','btn-sm', 'm-2')
         button.addEventListener('click', () => getExpenses(i));
-        if (i === currentPage) {
+
+        if (i === parseInt(sessionStorage.getItem('currentPage'))) {
             button.classList.add('active');
         }
         paginationContainer.appendChild(button);
     }
+    
+}
+
+function itemsPerPageDropdown (selectedValue){
+    const selectedItemsPerPage = parseInt(selectedValue);
+    const currentPage = 1
+    getExpenses(currentPage, selectedItemsPerPage);
 }

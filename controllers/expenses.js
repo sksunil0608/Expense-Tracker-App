@@ -49,8 +49,7 @@ exports.getExpense = async (req, res, next) => {
 };
 exports.getExpenses = async (req, res, next) => {
   const page = req.query.page || 1  
-  console.log(req.query.page)
-  const itemsPerPage = 5
+  const itemsPerPage = parseInt(req.query.itemsPerPage) || 10
   const offset = (page - 1) * itemsPerPage; 
   try{
   const expenses = await req.user.getExpenses({offset:offset,limit:itemsPerPage});
@@ -60,6 +59,7 @@ exports.getExpenses = async (req, res, next) => {
   res.json({ allExpenses: expenses ,totalExpense:userTotalExpenseAmount,totalPages:totalPages});
   }
   catch(err){
+
     res.status(500).json({Error:"Internal Server Error"})
   }
 };

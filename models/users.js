@@ -27,8 +27,11 @@ const User = sequelize.define('users',{
         allowNull:false,
         defaultValue: false,
     },
-    totalExpenses:{
+    totalExpenseAmount:{
         type:Sequelize.INTEGER
+    },
+    totalExpense: {
+        type: Sequelize.INTEGER
     }
 })
 

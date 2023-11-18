@@ -48,9 +48,20 @@ exports.getExpense = async (req, res, next) => {
   res.json({ allExpenses: expense });
 };
 exports.getExpenses = async (req, res, next) => {
-  const expenses = await req.user.getExpenses();
-  const userTotalExpense = req.user.totalExpenses
-  res.json({ allExpenses: expenses ,totalExpense:userTotalExpense});
+  const page = req.query.page || 1  
+  console.log(req.query.page)
+  const itemsPerPage = 5
+  const offset = (page - 1) * itemsPerPage; 
+  try{
+  const expenses = await req.user.getExpenses({offset:offset,limit:itemsPerPage});
+  const totalExpense = await req.user.totalExpense
+  const totalPages = Math.ceil(totalExpense/itemsPerPage)
+  const userTotalExpenseAmount = await req.user.totalExpenseAmount
+  res.json({ allExpenses: expenses ,totalExpense:userTotalExpenseAmount,totalPages:totalPages});
+  }
+  catch(err){
+    res.status(500).json({Error:"Internal Server Error"})
+  }
 };
 
 exports.postAddExpense = async (req, res, next) => {
@@ -72,14 +83,16 @@ exports.postAddExpense = async (req, res, next) => {
       {transaction:t}
       );
 
-    const userTotalExpense = await req.user.totalExpenses
-    if( userTotalExpense === 0 || userTotalExpense === null){
-      req.user.totalExpenses = price
+    const userTotalExpenseAmount = await req.user.totalExpenseAmount
+    const userTotalExpense = await req.user.totalExpense
+    if( userTotalExpenseAmount === 0 || userTotalExpenseAmount === null||userTotalExpense==0 ||userTotalExpense==null){
+      req.user.totalExpenseAmount = price
+      req.user.totalExpense = 1
     }
     else{
-      req.user.totalExpenses = req.user.totalExpenses + + price
+      req.user.totalExpenseAmount = req.user.totalExpenseAmount + + price
+      req.user.totalExpense = req.user.totalExpense + + 1
     }
-
     await req.user.save({transaction:t})
 
     await t.commit(); 
@@ -122,10 +135,10 @@ exports.postEditExpense = async (req, res, next) => {
     await response.save({transaction:t});
 
     // Subtract the previous price from totalExpenses
-    req.user.totalExpenses -= previousPrice;
+    req.user.totalExpenseAmount -= previousPrice;
 
     // Add the new price to totalExpenses
-    req.user.totalExpenses = req.user.totalExpenses + + price;
+    req.user.totalExpenseAmount = req.user.totalExpenseAmount + + price;
 
     await req.user.save({transaction:t});
     await t.commit();
@@ -156,8 +169,9 @@ exports.deleteExpenses = async (req, res, next) => {
             return res.status(404).json({ Error: "Nothing Found!!" });
         }
 
-        if (req.user.totalExpenses !== null) {
-            req.user.totalExpenses -= expense[0].price;
+        if (req.user.totalExpenseAmount !== null || req.user.totalExpense != null) {
+            req.user.totalExpenseAmount -= expense[0].price;
+            req.user.totalExpense -= 1
         }
 
         await req.user.save({transaction:t});

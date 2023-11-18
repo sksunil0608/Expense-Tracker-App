@@ -9,7 +9,10 @@ expenseTrackerButton.onclick =function(){
 form = document.getElementById('expenseForm');
 form.addEventListener("submit",createExpense);
 
-window.addEventListener('DOMContentLoaded', getExpenses)
+window.addEventListener('DOMContentLoaded', ()=>{
+    const currentPage = sessionStorage.getItem('currentPage') || 1;
+    getExpenses(currentPage);
+})
 
 function parseJwt(token) {
     var base64Url = token.split('.')[1];
@@ -48,6 +51,8 @@ function showAllExpenses(response){
 
     const table = document.getElementById('table');
     noExpense = document.getElementById('noExpense');
+
+    
     if(data.length==0){
         table.style.display="none";
     }
@@ -111,7 +116,7 @@ function showEditExpense(response) {
   document.getElementById(`${response.data.allExpenses.id}`).remove();
   showAddedExpense(response);
 }
-async function getExpenses(){
+async function getExpenses(page=1){
     const token = localStorage.getItem('token')
     try{
         const decodedToken = parseJwt(token)
@@ -119,8 +124,11 @@ async function getExpenses(){
         if(isPremium){
             premiumUserUI();
         }
-        const response = await axios.get("http://localhost:3000/all-expenses", { headers: { "Authorization": token } });
-        showAllExpenses(response)
+        // Store the current page in local storage
+        sessionStorage.setItem('currentPage', page);
+
+        const response = await axios.get(`http://localhost:3000/all-expenses?page=${page}`, { headers: { "Authorization": token } });
+        updatePaginationControls(response, page)
     }catch(err){
         console.log(err)
     }
@@ -232,3 +240,23 @@ logout_button.onclick = async function logout(e) {
     }
 }
 
+function updatePaginationControls(response, currentPage) {
+    var tableBody = document.getElementById("table-body");
+    tableBody.innerHTML = '';
+    showAllExpenses(response)
+    const totalPages = response.data.totalPages
+    const paginationContainer = document.getElementById('pagination-container');
+    paginationContainer.innerHTML = ''; // Clear existing buttons
+
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement('button');
+        button.textContent = i;
+        button.classList.add('btn', 'btn-secondary', 'm-2')
+        button.addEventListener('click', () => getExpenses(i));
+        if (i === currentPage) {
+            button.classList.add('active');
+        }
+        paginationContainer.appendChild(button);
+    }
+}

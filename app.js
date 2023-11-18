@@ -2,6 +2,10 @@ const express = require('express');
 const sequelize =require('./util/database')
 const cors = require("cors");
 const path = require('path')
+const helment = require('helmet')
+const compression = require('compression')
+const morgan = require('morgan')
+const fs = require('fs')
 const bodyParser = require('body-parser')
 
 const User = require('./models/users')
@@ -12,6 +16,15 @@ const DownloadLog = require('./models/downloadLog')
 
 const app= express();
 app.use(cors())
+
+app.use(compression());
+app.use(helment());
+
+const accessLogStream = fs.createWriteStream(
+    path.join(__dirname,'access.log'),
+    {flags:'a'}
+)
+app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -45,6 +58,6 @@ DownloadLog.belongsTo(User);
 
 
 sequelize.sync().then(()=>{
-    app.listen(3000);
+    app.listen(process.env.PORT);
 }).
 catch(err=>console.log(err))

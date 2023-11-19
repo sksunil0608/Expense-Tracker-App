@@ -49,7 +49,8 @@ const getResetPassword = async (req, res) => {
 
         if (forgetRequest) {
             forgetRequest.update({ active: false });
-            return res.sendFile(path.join(__dirname,'..', 'views', 'reset-password.html'))
+            res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'reset-password.html'));
+
         }
     } catch (err) {
         res.status(500).json({ Error: "Internal Server Error" })

@@ -16,8 +16,8 @@ exports.getLeaderboard = async (req, res) => {
         //     order:[[sequelize.col('total_expense'),"DESC"]]
         // }) 
         const userLeaderboard = await User.findAll({
-            attributes:['name','totalExpenses'],
-            order:[['totalExpenses','DESC']]
+            attributes:['name','totalExpenseAmount'],
+            order:[['totalExpenseAmount','DESC']]
             
         })
 

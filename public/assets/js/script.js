@@ -1,18 +1,21 @@
+const BACKEND_ADDRESS = ''
+const BACKEND_API__URL = BACKEND_ADDRESS||'http://localhost:3000'; 
+
 //Navigation
 expenseTrackerButton = document.querySelector("#expenseTrackerButton");
-expenseTrackerButton.onclick =function(){
+expenseTrackerButton.onclick = function () {
     window.scrollTo({
         top: document.getElementById('table').offsetTop,
     });
 }
 // Form DOM
-form = document.getElementById('expenseForm');
-form.addEventListener("submit",createExpense);
+const form = document.getElementById('expenseForm');
+form.addEventListener("submit", createExpense);
 
-window.addEventListener('DOMContentLoaded', ()=>{
+window.addEventListener('DOMContentLoaded', () => {
     const currentPage = sessionStorage.getItem('currentPage') || 1;
     const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage') || 5;
-    getExpenses(currentPage,selectedItemsPerPage);
+    getExpenses(currentPage, selectedItemsPerPage);
 })
 
 function parseJwt(token) {
@@ -26,40 +29,45 @@ function parseJwt(token) {
 }
 
 
-function clearInputBox(){
-    document.querySelector('#expenseDesc').value='';
-    document.querySelector('#expenseAmount').value='';
+function clearInputBox() {
+    document.querySelector('#expenseDesc').value = '';
+    document.querySelector('#expenseAmount').value = '';
     document.querySelector("#expenseCat").value = "";
 }
 function premiumUserUI() {
-    document.getElementById('normal-user-area').remove();
-    const premium_user_msg = document.createElement('div')
-    premium_user_msg.innerHTML = `
+    if (!document.getElementById('premium_user_msg')) {
+        if (document.getElementById('normal-user-area')) {
+            document.getElementById('normal-user-area').remove();
+        }
+        const premium_user_msg = document.createElement('div')
+        premium_user_msg.id = 'premium_user_msg'
+        premium_user_msg.innerHTML = `
     <strong><p class="text-success text-center">
     Hi ${'SUNIL'},
     Thanks For Using Our Expense Tracker App. 
     You are already a Premium User.    
     `
-    document.getElementById('premium-user-area-button').innerHTML=`
+        document.getElementById('premium-user-area-button').innerHTML = `
         <button class="btn btn-success rounded w-100 mb-2 mb-md-0" onclick="showLeaderboard()">Leaderboard</button>
     </p></strong>
     `
-    document.getElementById('premium-user-area').appendChild(premium_user_msg)
+        document.getElementById('premium-user-area').appendChild(premium_user_msg)
+    }
 }
 //Function to Show Expenses
-function showAllExpenses(response){
+function showAllExpenses(response) {
     const data = response.data.allExpenses;
 
     const table = document.getElementById('table');
     noExpense = document.getElementById('noExpense');
 
-    
-    if(data.length==0){
-        table.style.display="none";
+
+    if (data.length == 0) {
+        table.style.display = "none";
     }
-    else{
-        noExpense.style.display ="none";
-        data.forEach((i)=>{
+    else {
+        noExpense.style.display = "none";
+        data.forEach((i) => {
             // Create a new row
             var tableBody = document.getElementById("table-body");
             var newRow = tableBody.insertRow();
@@ -85,61 +93,61 @@ function showAllExpenses(response){
 
     }
 
-    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense||0}`
+    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense || 0}`
 }
 
-function showAddedExpense(response){
-const data = response.data.allExpenses;
-  // Create a new row
-  var tableBody = document.getElementById("table-body");
-  var newRow = tableBody.insertRow();
-  newRow.id = data.id;
+function showAddedExpense(response) {
+    const data = response.data.allExpenses;
+    // Create a new row
+    var tableBody = document.getElementById("table-body");
+    var newRow = tableBody.insertRow();
+    newRow.id = data.id;
 
-  // Insert cells into the row
-  var cell1 = newRow.insertCell(0);
-  var cell2 = newRow.insertCell(1);
-  var cell3 = newRow.insertCell(2);
-  var cell4 = newRow.insertCell(3);
-  var cell5 = newRow.insertCell(4);
+    // Insert cells into the row
+    var cell1 = newRow.insertCell(0);
+    var cell2 = newRow.insertCell(1);
+    var cell3 = newRow.insertCell(2);
+    var cell4 = newRow.insertCell(3);
+    var cell5 = newRow.insertCell(4);
 
-  cell1.innerHTML = data.expenseName;
-  cell2.innerHTML = data.price;
-  cell3.innerHTML = data.category;
-  cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteExpense('${data.id}')">
+    cell1.innerHTML = data.expenseName;
+    cell2.innerHTML = data.price;
+    cell3.innerHTML = data.category;
+    cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteExpense('${data.id}')">
                                 Delete
                             </button>`;
-  cell5.innerHTML = `<button class="btn btn-warning btn-sm input-group-text m-1" onclick="updateExpense('${data.id}')">
+    cell5.innerHTML = `<button class="btn btn-warning btn-sm input-group-text m-1" onclick="updateExpense('${data.id}')">
                                 Edit
                             </button>`;
 }
 //show edit expense
 function showEditExpense(response) {
-  document.getElementById(`${response.data.allExpenses.id}`).remove();
-  showAddedExpense(response);
+    document.getElementById(`${response.data.allExpenses.id}`).remove();
+    showAddedExpense(response);
 }
-async function getExpenses(page,itemsPerPage){
+async function getExpenses(page, itemsPerPage) {
     const token = localStorage.getItem('token')
-    try{
+    try {
         const decodedToken = parseJwt(token)
         const isPremium = decodedToken.isPremiumUser
-        if(isPremium){
+        if (isPremium) {
             premiumUserUI();
         }
         // Store the current page in local storage
         sessionStorage.setItem('currentPage', page);
         sessionStorage.setItem('itemsPerPage', itemsPerPage);
 
-        const response = await axios.get(`http://localhost:3000/all-expenses?page=${page}&itemsPerPage=${itemsPerPage}`, { headers: { "Authorization": token } });
+        const response = await axios.get(`${BACKEND_API__URL}/all-expenses?page=${page}&itemsPerPage=${itemsPerPage}`, { headers: { "Authorization": token } });
         updatePaginationControls(response)
-        
-    }catch(err){
+
+    } catch (err) {
         console.log(err)
     }
 }
 // Store Expense to Local Storage
-async function createExpense(event){
+async function createExpense(event) {
     event.preventDefault();
-        
+
     const expenseName = event.target.expenseDesc.value;
     const price = event.target.expenseAmount.value;
     const category = event.target.expenseCat.value;
@@ -150,13 +158,13 @@ async function createExpense(event){
         price,
         category,
     }
-    
-    try{
-        const response = await axios.post("http://localhost:3000/add-expense",obj,header);
+
+    try {
+        const response = await axios.post(`${BACKEND_API__URL}/add-expense`, obj, header);
         showAddedExpense(response);
         clearInputBox();
     }
-    catch(err){
+    catch (err) {
         var myElement = document.getElementById('error-area');
         var errorAlert = document.createElement('div');
         errorAlert.innerHTML = `<div class="text-danger">
@@ -167,78 +175,78 @@ async function createExpense(event){
 }
 
 function removeDeletedExpenseUI(id) {
-  document.getElementById(id).remove();
+    document.getElementById(id).remove();
 }
 //function to Delete
-async function deleteExpense(expenseId){
-    try{
+async function deleteExpense(expenseId) {
+    try {
         const token = localStorage.getItem('token')
         const header = { headers: { "Authorization": token } }
-        const response = await axios.delete(`http://localhost:3000/delete/${expenseId}`,header);
+        const response = await axios.delete(`${BACKEND_API__URL}/delete/${expenseId}`, header);
         removeDeletedExpenseUI(expenseId);
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
 }
 
 function showInputDataOnEditpage(response) {
     const data = response.data.allExpenses
-  document.querySelector("#expenseDesc").value = data.expenseName
-  document.querySelector("#expenseAmount").value = data.price
-  document.querySelector("#expenseCat").value = data.category
+    document.querySelector("#expenseDesc").value = data.expenseName
+    document.querySelector("#expenseAmount").value = data.price
+    document.querySelector("#expenseCat").value = data.category
 }
 //Function to Edit
-async function updateExpense(expenseId){
+async function updateExpense(expenseId) {
     const token = localStorage.getItem('token')
     const header = { headers: { "Authorization": token } }
-    const response = await axios.get(`http://localhost:3000/expense/${expenseId}`,header);
+    const response = await axios.get(`${BACKEND_API__URL}/expense/${expenseId}`, header);
     showInputDataOnEditpage(response);
 
-  const update_btn = document.createElement("div");
-  update_btn.style = "display:flex;justify-content:center;"
-  update_btn.innerHTML = `<button class="btn btn-warning submit-button input-group-text m-1">
+    const update_btn = document.createElement("div");
+    update_btn.style = "display:flex;justify-content:center;"
+    update_btn.innerHTML = `<button class="btn btn-warning submit-button input-group-text m-1">
                                 UPDATE
                            </button>`;
-  document.getElementById("form-border").appendChild(update_btn);
-  update_btn.addEventListener("click", postEditData);
+    document.getElementById("form-border").appendChild(update_btn);
+    update_btn.addEventListener("click", postEditData);
 
-  async function postEditData(event) {
-    event.preventDefault();
-    const expenseName = document.querySelector("#expenseDesc").value;
-    const price = document.querySelector("#expenseAmount").value;
-    const category = document.querySelector("#expenseCat").value;
-    const obj = {
-      expenseName,
-      price,
-      category,
-    };
+    async function postEditData(event) {
+        event.preventDefault();
+        const expenseName = document.querySelector("#expenseDesc").value;
+        const price = document.querySelector("#expenseAmount").value;
+        const category = document.querySelector("#expenseCat").value;
+        const obj = {
+            expenseName,
+            price,
+            category,
+        };
 
-    try {
-        const token = localStorage.getItem('token')
-        const header = { headers: { "Authorization": token } }
-      const response = await axios.put(
-        `http://localhost:3000/edit/${expenseId},`,
-        obj,header
-      );
-      showEditExpense(response);
-      clearInputBox();
-    } catch (err) {
-      console.log(err);
+        try {
+            const token = localStorage.getItem('token')
+            const header = { headers: { "Authorization": token } }
+            const response = await axios.put(
+                `${BACKEND_API__URL}/edit/${expenseId},`,
+                obj, header
+            );
+            showEditExpense(response);
+            clearInputBox();
+        } catch (err) {
+            console.log(err);
+        }
     }
-  }
 }
 
 
 const logout_button = document.getElementById('logout')
 logout_button.onclick = async function logout(e) {
-    try{
+    try {
         e.preventDefault();
         const token = localStorage.getItem('token')
-        await axios.get('http://localhost:3000/logout',{headers:{"Authorization":token}})
+        await axios.get(`${BACKEND_API__URL}/logout`, { headers: { "Authorization": token } })
         localStorage.removeItem('token')
-        window.location.href = '../views/login.html'
+        window.location.href = "authentication/login.html"
 
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
 }
@@ -251,12 +259,12 @@ function updatePaginationControls(response) {
     const paginationContainer = document.getElementById('pagination-container');
     paginationContainer.innerHTML = ''; // Clear existing buttons
 
-    
+
     for (let i = 1; i <= totalPages; i++) {
-        
+
         const button = document.createElement('button');
         button.textContent = i;
-        button.classList.add('btn', 'btn-outline-secondary','btn-sm', 'm-2')
+        button.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'm-2')
         button.addEventListener('click', () => getExpenses(i, sessionStorage.getItem('itemsPerPage')));
 
         if (i === parseInt(sessionStorage.getItem('currentPage'))) {
@@ -264,11 +272,13 @@ function updatePaginationControls(response) {
         }
         paginationContainer.appendChild(button);
     }
-    
+
 }
 
-function itemsPerPageDropdown (selectedValue){
+function itemsPerPageDropdown(selectedValue) {
     const selectedItemsPerPage = selectedValue;
     const currentPage = 1
     getExpenses(currentPage, selectedItemsPerPage);
 }
+
+

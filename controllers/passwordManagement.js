@@ -1,7 +1,7 @@
 const uuid = require('uuid')
 const bcrypt = require('bcrypt')
 const path = require('path')
-
+require('dotenv').config();
 const ForgotPassword = require('../models/forgotPassword')
 const User = require('../models/users')
 const email = require('../services/email')
@@ -16,7 +16,7 @@ const postForgotPassword = async (req, res) => {
 
             const msg = {
                 to: user_email,
-                from: 'sksunil0608@gmail.com', // Change to your verified sender
+                from: process.env.FROM_EMAIL, // Change to your verified sender
                 subject: 'Forgot Password',
                 text: 'You requested a password reset. Please follow the link to reset your password.',
                 html: `<p>You requested a password reset. Please follow the link to reset your password.</p>

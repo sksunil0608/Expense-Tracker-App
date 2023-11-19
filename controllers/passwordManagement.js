@@ -6,6 +6,29 @@ const ForgotPassword = require('../models/forgotPassword')
 const User = require('../models/users')
 const email = require('../services/email')
 
+const getForgotPasswordView = (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'forget-password.html'));
+}
+
+const getResetPasswordView = async (req, res) => {
+    try {
+        const uuid = req.params.uuid
+        const forgetRequest = await ForgotPassword.findOne({ where: { id: uuid } })
+
+        if (forgetRequest.active === false) {
+            return res.status(403).json({ Error: "Reset Link Expired" })
+        }
+
+        if (forgetRequest) {
+            forgetRequest.update({ active: false });
+            res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'reset-password.html'));
+
+        }
+    } catch (err) {
+        res.status(500).json({ Error: "Internal Server Error" })
+    }
+}
+
 const postForgotPassword = async (req, res) => {
     try {
         const user_email = req.body.email;
@@ -38,24 +61,7 @@ const postForgotPassword = async (req, res) => {
 
 }
 
-const getResetPassword = async (req, res) => {
-    try {
-        const uuid = req.params.uuid
-        const forgetRequest = await ForgotPassword.findOne({ where: { id: uuid } })
 
-        if (forgetRequest.active === false) {
-            return res.status(403).json({ Error: "Reset Link Expired" })
-        }
-
-        if (forgetRequest) {
-            forgetRequest.update({ active: false });
-            res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'reset-password.html'));
-
-        }
-    } catch (err) {
-        res.status(500).json({ Error: "Internal Server Error" })
-    }
-}
 
 
 const postUpdatePassword = async (req,res)=>{
@@ -94,4 +100,9 @@ const postUpdatePassword = async (req,res)=>{
     }
 }
 
-module.exports = {postForgotPassword,getResetPassword,postUpdatePassword}
+module.exports = {
+    postForgotPassword,
+    getResetPasswordView,
+    postUpdatePassword,
+    getForgotPasswordView
+}

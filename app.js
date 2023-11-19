@@ -42,9 +42,12 @@ app.use(userRoutes);
 app.use(premiumRoutes);
 app.use(premiumFeatureRoutes)
 app.use(passwordRoutes)
-app.use((req,res)=>{
-    res.sendFile((path.join(__dirname,`public${req.url}`)))
-})
+
+
+app.use((req, res, next) => {
+        return res.sendFile(path.join(__dirname, 'views', '404.html'));
+    });
+
 
 
 User.hasMany(Expense);

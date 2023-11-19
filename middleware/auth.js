@@ -5,6 +5,12 @@ const authenticate = async (req,res,next)=>{
         const token = req.header('Authorization');
         const newUser = jwt.verify(token,'secretkey')
         const user = await User.findByPk(newUser.userId);
+
+        if (!user) {
+            // Redirect to the login page if the user is not found
+            return res.redirect('/login');
+        }
+
         // console.log(JSON.stringify(user))
         req.user = user;
         next();

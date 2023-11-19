@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-
+const path=require('path')
 const User = require('../models/users')
 
 
@@ -8,6 +8,13 @@ function isInValidString(str) {
     return (str == undefined || str.length == 0) ? true : false
 
 }
+const getLoginView = (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'login.html'));
+}
+const getSignUpView = (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'signup.html'));
+}
+
 const postSignUp = async (req, res) => {
     try {
         const { name: newName, email: newEmail, password: newPass } = req.body;
@@ -105,4 +112,11 @@ const logout = async (req,res)=>{
 }
 
 
-module.exports = {postSignUp,generateAccessToken,postLogin,logout};
+module.exports = {
+    postSignUp,
+    generateAccessToken,
+    postLogin,
+    logout,
+    getLoginView,
+    getSignUpView
+};

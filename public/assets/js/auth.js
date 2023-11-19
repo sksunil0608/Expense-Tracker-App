@@ -1,4 +1,4 @@
-const BACKEND_ADDRESS = 'http://54.224.181.169:3000'
+const BACKEND_ADDRESS = 'http://34.231.139.245'
 const BACKEND_API__URL = BACKEND_ADDRESS ? BACKEND_ADDRESS : 'http://localhost:3000'; 
 //-------------------------Login--------------------------
 function clearLoginInputBox() {
@@ -121,3 +121,20 @@ async function forget_password(event) {
         console.log(err)
     }
 }
+
+async function forget_password(event) {
+    try {
+        event.preventDefault();
+        const email = event.target.email.value
+        const response = await axios.post(`http://${BACKEND_API__URL}/password/forgotpassword`, { email })
+        document.getElementById('email-messagse-area').innerHTML = `
+        <p class="text-danger">Password Reset Link Sent Successfully. Check Your Email Please.</p>
+        `
+        event.target.email.value = ''
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+

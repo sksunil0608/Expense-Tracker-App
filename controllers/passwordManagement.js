@@ -101,8 +101,9 @@ const postUpdatePassword = async (req,res)=>{
 }
 
 module.exports = {
+    getForgotPasswordView,
     postForgotPassword,
     getResetPasswordView,
     postUpdatePassword,
-    getForgotPasswordView
+    
 }

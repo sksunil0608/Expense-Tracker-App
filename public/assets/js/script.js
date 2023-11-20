@@ -1,5 +1,5 @@
-const BACKEND_ADDRESS = 'http://34.231.139.245'
-const BACKEND_API__URL = BACKEND_ADDRESS||'http://localhost:3000'; 
+const BACKEND_ADDRESS = ''
+const BACKEND_API__URL = BACKEND_ADDRESS || 'http://localhost:3000';
 
 //Navigation
 expenseTrackerButton = document.querySelector("#expenseTrackerButton");
@@ -249,6 +249,27 @@ logout_button.onclick = async function logout(e) {
     } catch (err) {
         console.log(err)
     }
+}
+
+
+async function expense_report_view(event) {
+    try {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            console.log("Token not found. Please authenticate.");
+            // Handle the case where the token is not available (redirect to login, show an error, etc.)
+            return;
+        }
+
+        const response = await axios.get(`${BACKEND_API__URL}/user/expense-report`, {
+            headers: { "Authorization": token },
+        });
+        window.location.href='../../expense-report.html'
+    } catch (err) {
+        console.log("Error Loading Expense Report", err);
+    }
+
 }
 
 function updatePaginationControls(response) {

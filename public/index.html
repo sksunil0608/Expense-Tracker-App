@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Expense Tracker App</title>
@@ -17,13 +18,13 @@
 <body>
   <nav class="navbar navbar-expand" style="background-color: lightblue">
     <div class="container">
-      <a href="index.html" class="navbar-brand">Expense Tracker</a>
+      <a href="/" class="navbar-brand">Expense Tracker</a>
       <ul class="navbar-nav">
         <li class="nav-item">
           <a href="#" class="nav-link active">Home</a>
         </li>
         <li class="nav-item" id="expenseTrackerButton">
-          <a href="index.html" class="nav-link">Expense Tracker</a>
+          <a href="/" class="nav-link">Expense Tracker</a>
         </li>
 
       </ul>
@@ -32,8 +33,8 @@
   <div class="container text-centeruser-area mt-3" id="user-area">
     <div class="row align-items-start">
       <div class="col-md-4 col-sm-12" id="">
-        <a href="expense-report.html"> <button class="btn btn-success rounded w-100 mb-2 mb-md-0">Expense
-            Report</button></a>
+        <button class="btn btn-success rounded w-100 mb-2 mb-md-0" onclick="expense_report_view(event)">Expense
+          Report</button>
       </div>
       <div class="col-md-4 col-sm-12" id="premium-user-area-button">
         <button class="btn btn-success rounded w-100 mb-2 mb-md-0" id="rzp-buy-premium">Buy Premium</button>

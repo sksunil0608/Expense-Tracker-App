@@ -5,10 +5,10 @@ const express = require('express');
 const router = express.Router();
 
 
-//Get Request 
-// router.get('/',UserAuth.authenticate,(req,res)=>{
-//     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-// });
+// Get Request 
+router.get('/',UserAuth.authenticate,(req,res)=>{
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
 router.get('/user/download', UserAuth.authenticate, expenseController.downloadReport);
 

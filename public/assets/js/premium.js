@@ -54,11 +54,12 @@ async function getBuyPremium(event) {
             "key": response.data.key_id, //Key Genereated By dashboard
             "order_id": response.data.order.id,
             "handler": async function (response) {
+                console.log("1")
                     const transResponse = await axios.post(`${BACKEND_API__URL}/transaction-status`, {
                         order_id: options.order_id,
                         payment_id: response.razorpay_payment_id
                     }, { headers: { "Authorization": token } })
-                    
+                console.log("3")
                     if(transResponse.status ==202){
                         premiumUserUI();
                     }
@@ -69,6 +70,7 @@ async function getBuyPremium(event) {
         };
         const rzp1 = new Razorpay(options);
         rzp1.open();
+
         event.preventDefault();
         rzp1.on('payment failed', function (response) {
             console.log(response);

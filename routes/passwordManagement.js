@@ -4,7 +4,7 @@ const router = express.Router();
 
 router.get('/password/forgotpassword', passwordController.getForgotPasswordView)
 
-router.use('/password/forgotpassword', passwordController.postForgotPassword)
+router.post('/password/forgotpassword', passwordController.postForgotPassword)
 
 router.get('/password/resetpassword/:uuid', passwordController.getResetPasswordView)
 

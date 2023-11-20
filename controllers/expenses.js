@@ -2,14 +2,20 @@ const Expense = require("../models/expenses");
 const sequelize = require('../util/database')
 const UserService = require('../services/userservices')
 const S3Service = require('../services/S3Services')
-path = require('path')
+const path = require('path')
 
 function isInValidString(str) {
   return (str == undefined || str.length == 0) ? true : false
 }
 
 exports.getExpenseReportView = (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'expense-report.html'));
+  try{
+    return res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'forget-password.html'));
+  }
+  catch(err){
+    console.log(err)
+    res.status(500).send('Internal Server Error');
+  }
 }
 
 

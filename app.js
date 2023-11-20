@@ -13,12 +13,13 @@ const Expense = require('./models/expenses')
 const Order = require('./models/orders')
 const ForgotPassword = require('./models/forgotPassword')
 const DownloadLog = require('./models/downloadLog')
+const UserAuth = require('./middleware/auth')
 
 const app= express();
 app.use(cors())
 
 app.use(compression());
-app.use(helment());
+app.use(helment({ contentSecurityPolicy: false ,}));
 
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname,'access.log'),
@@ -37,11 +38,12 @@ const userRoutes = require('./routes/users')
 const premiumRoutes = require('./routes/premium')
 const premiumFeatureRoutes = require('./routes/premiumFeatures')
 const passwordRoutes = require('./routes/passwordManagement')
-app.use(expenseRoutes);
 app.use(userRoutes);
+app.use(passwordRoutes)
+app.use(expenseRoutes);
 app.use(premiumRoutes);
 app.use(premiumFeatureRoutes)
-app.use(passwordRoutes)
+
 
 
 app.use((req, res, next) => {

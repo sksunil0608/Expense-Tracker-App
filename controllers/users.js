@@ -67,7 +67,6 @@ const generateAccessToken = (id,name,isPremium) =>{
 const postLogin = async (req, res) => {
     try {
         const { email: userEmail, password: userPass } = req.body;
-
         if (isInValidString(userEmail) || isInValidString(userPass)) {
             return res.status(400).json({ Error: "You have not filled all the details" })
         }

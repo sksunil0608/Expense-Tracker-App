@@ -13,7 +13,6 @@ const Expense = require('./models/expenses')
 const Order = require('./models/orders')
 const ForgotPassword = require('./models/forgotPassword')
 const DownloadLog = require('./models/downloadLog')
-const UserAuth = require('./middleware/auth')
 
 const app= express();
 app.use(cors())
@@ -38,6 +37,8 @@ const userRoutes = require('./routes/users')
 const premiumRoutes = require('./routes/premium')
 const premiumFeatureRoutes = require('./routes/premiumFeatures')
 const passwordRoutes = require('./routes/passwordManagement')
+const homeRoutes = require('./routes/home')
+app.use(homeRoutes)
 app.use(userRoutes);
 app.use(passwordRoutes)
 app.use(expenseRoutes);

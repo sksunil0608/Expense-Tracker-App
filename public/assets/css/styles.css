@@ -24,8 +24,15 @@ body {
 .ml-5 {
   margin-left: 80px;
 }
+
 .w-lg-50 {
   width: 50%;
+}
+
+#footer {
+  background-color: #9bcccb;
+  padding: 20px;
+  text-align: center;
 }
 
 @media (max-width: 1199px) {

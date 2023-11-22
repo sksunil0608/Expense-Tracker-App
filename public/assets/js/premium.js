@@ -55,17 +55,17 @@ async function getBuyPremium(event) {
             "order_id": response.data.order.id,
             "handler": async function (response) {
                 console.log("1")
-                    const transResponse = await axios.post(`${BACKEND_API__URL}/transaction-status`, {
-                        order_id: options.order_id,
-                        payment_id: response.razorpay_payment_id
-                    }, { headers: { "Authorization": token } })
+                const transResponse = await axios.post(`${BACKEND_API__URL}/transaction-status`, {
+                    order_id: options.order_id,
+                    payment_id: response.razorpay_payment_id
+                }, { headers: { "Authorization": token } })
                 console.log("3")
-                    if(transResponse.status ==202){
-                        premiumUserUI();
-                    }
-                    
-                    localStorage.setItem('token',transResponse.data.token)
-                
+                if (transResponse.status == 202) {
+                    premiumUserUI();
+                }
+
+                localStorage.setItem('token', transResponse.data.token)
+
             }
         };
         const rzp1 = new Razorpay(options);
@@ -83,7 +83,7 @@ async function getBuyPremium(event) {
         })
     }
     catch (err) {
-        if (err.response.status==403){
+        if (err.response.status == 403) {
             document.getElementById('premium-user-area').innerHTML = `
                 <strong><p class="text-danger text-center">
                 Hi ${'user'},
@@ -91,7 +91,7 @@ async function getBuyPremium(event) {
                 </p></strong>
             `
         }
-        else{
+        else {
             console.log(err)
         }
     }

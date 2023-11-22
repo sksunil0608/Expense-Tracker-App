@@ -18,7 +18,6 @@ const getResetPasswordView = async (req, res) => {
         if (forgetRequest.active === false) {
             return res.status(403).json({ Error: "Reset Link Expired" })
         }
-
         if (forgetRequest) {
             forgetRequest.update({ active: false });
             res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'reset-password.html'));
@@ -36,7 +35,6 @@ const postForgotPassword = async (req, res) => {
         if (user) {
             const id = uuid.v4()
             await user.createForgotpassword({ id, active: true })
-
             const msg = {
                 to: user_email,
                 from: process.env.FROM_EMAIL, // Change to your verified sender
@@ -68,7 +66,6 @@ const postUpdatePassword = async (req,res)=>{
     try{
         const new_passwrod = req.body.password
         const resetId = req.params.uuid
-
         const resetRequest = await ForgotPassword.findOne({where:{id:resetId}})
     
         const user = await User.findOne({where:{id:resetRequest.userId}})

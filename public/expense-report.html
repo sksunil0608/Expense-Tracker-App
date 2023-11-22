@@ -14,18 +14,45 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand" style="background-color: lightblue">
+    <nav class="navbar navbar-expand-lg" style="background-color: lightblue">
         <div class="container">
-            <a href="/" class="navbar-brand">Expense Tracker</a>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a href="index.html" class="nav-link active">Home</a>
-                </li>
-                <li class="nav-item" id="expenseTrackerButton">
-                    <a href="index.html" class="nav-link">Expense Tracker</a>
-                </li>
+            <a href="/admin" class="navbar-brand">Expense Tracker</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="nav flex-column flex-sm-row nav-pills justify-content-end">
 
-            </ul>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="expense_report_view(event)">Expense Report</a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                            aria-expanded="false"><i class="fa fa-user fa-fw"></i> User</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#"><button class="bg-transparent border-0"
+                                        id="user-info"><i class="fa fa-user-circle fa-fw"></i> Account</button></a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><button class="dropdown-item bg-transparent border-0" id="logout"><i
+                                        class="fa fa-power-off fa-fw"></i>
+                                    Logout</button>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                            aria-expanded="false"><i class="fa fa-moon-o"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" class="nav-link" onclick="setTheme('light')">Light</a></li>
+                            <li><a href="#" class="nav-link" onclick="setTheme('dark')">Dark</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
     </nav>
     <div class="container text-center user-area mt-3">
@@ -139,7 +166,7 @@
     </div>
 
     <script>
-        const BACKEND_ADDRESS = 'http://34.231.139.245'
+        const BACKEND_ADDRESS = ''
         const BACKEND_API__URL = BACKEND_ADDRESS ? BACKEND_ADDRESS : 'http://localhost:3000';
         var currentDate = new Date();
         var formattedDate = currentDate.toDateString();

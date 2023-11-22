@@ -1,13 +1,8 @@
-const BACKEND_ADDRESS = 'http://34.231.139.245'
+const BACKEND_ADDRESS = ''
 const BACKEND_API__URL = BACKEND_ADDRESS || 'http://localhost:3000';
 
 //Navigation
-expenseTrackerButton = document.querySelector("#expenseTrackerButton");
-expenseTrackerButton.onclick = function () {
-    window.scrollTo({
-        top: document.getElementById('table').offsetTop,
-    });
-}
+
 // Form DOM
 const form = document.getElementById('expenseForm');
 form.addEventListener("submit", createExpense);
@@ -16,6 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const currentPage = sessionStorage.getItem('currentPage') || 1;
     const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage') || 5;
     getExpenses(currentPage, selectedItemsPerPage);
+    
 })
 
 function parseJwt(token) {
@@ -277,23 +273,60 @@ function updatePaginationControls(response) {
     tableBody.innerHTML = '';
     showAllExpenses(response)
     const totalPages = response.data.totalPages
+    const currentPage = parseInt(sessionStorage.getItem('currentPage'));
+    const itemsPerPage = sessionStorage.getItem('itemsPerPage');
+
+    
     const paginationContainer = document.getElementById('pagination-container');
     paginationContainer.innerHTML = ''; // Clear existing buttons
 
-
-    for (let i = 1; i <= totalPages; i++) {
-
-        const button = document.createElement('button');
-        button.textContent = i;
-        button.classList.add('btn', 'btn-outline-secondary', 'btn-sm', 'm-2')
-        button.addEventListener('click', () => getExpenses(i, sessionStorage.getItem('itemsPerPage')));
-
-        if (i === parseInt(sessionStorage.getItem('currentPage'))) {
-            button.classList.add('active');
+    //---------Previous Button---------------
+    const previousLi = document.createElement('li');
+    previousLi.classList.add('page-item');
+    const previousLink = document.createElement('a');
+    previousLink.textContent = 'Previous';
+    previousLink.classList.add('page-link');
+    previousLink.addEventListener('click', () => {
+        if (currentPage > 1) {
+            getExpenses(currentPage - 1, itemsPerPage);
         }
-        paginationContainer.appendChild(button);
-    }
+    });
+    previousLi.appendChild(previousLink);
+    paginationContainer.appendChild(previousLi);
+    //---------Previous Button End ---------------
 
+    // Show page number dynamically
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement('li');
+        li.classList.add('page-item')
+
+        const link = document.createElement('a');
+        link.textContent = i;
+        link.classList.add('page-link');
+        link.addEventListener('click', () => getExpenses(i, itemsPerPage));
+
+        if (i === currentPage) {
+            li.classList.add('active');
+        }
+
+        li.appendChild(link);
+        paginationContainer.appendChild(li); // Insert before the "Next" li
+    }
+    // -------------Show page number dynamically ended--------------
+
+    //---------Next Button--------------
+    const nextLi = document.createElement('li');
+    const nextLink = document.createElement('a');
+    nextLink.textContent = 'Next';
+    nextLink.classList.add('page-link');
+    nextLink.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            getExpenses(currentPage + 1, itemsPerPage);
+        }
+    });
+    nextLi.appendChild(nextLink);
+    paginationContainer.appendChild(nextLi);
+    //----------------Next Page thing ended
 }
 
 function itemsPerPageDropdown(selectedValue) {
@@ -301,5 +334,6 @@ function itemsPerPageDropdown(selectedValue) {
     const currentPage = 1
     getExpenses(currentPage, selectedItemsPerPage);
 }
+
 
 

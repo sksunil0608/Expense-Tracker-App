@@ -3,18 +3,14 @@ const UserAuth = require('../middleware/auth')
 const express = require('express');
 
 const router = express.Router();
+router.get('/admin',expenseController.viewAdminPage)
 
-
-// Get Request 
-router.get('/',UserAuth.authenticate,(req,res)=>{
-    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
+router.get('/all-expenses', UserAuth.authenticate,expenseController.getExpenses);
 
 router.get('/user/download', UserAuth.authenticate, expenseController.downloadReport);
 
 router.get('/user/download-history',UserAuth.authenticate,expenseController.getAllDownloadHistory)
 
-router.get('/all-expenses',UserAuth.authenticate,expenseController.getExpenses);
 
 router.get('/expense/:expenseId', UserAuth.authenticate,expenseController.getExpense)
 

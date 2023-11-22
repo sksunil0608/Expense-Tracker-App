@@ -8,9 +8,13 @@ function isInValidString(str) {
   return (str == undefined || str.length == 0) ? true : false
 }
 
+exports.viewAdminPage = (req,res)=>{
+  return res.sendFile(path.join(__dirname, '..', 'public', 'admin.html'));
+}
+
 exports.getExpenseReportView = (req, res) => {
   try{
-    return res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'forget-password.html'));
+    return res.sendFile(path.join(__dirname, '..', 'public', 'expense-report.html'));
   }
   catch(err){
     console.log(err)
@@ -71,7 +75,7 @@ exports.getExpenses = async (req, res, next) => {
   res.json({ allExpenses: expenses ,totalExpense:userTotalExpenseAmount,totalPages:totalPages});
   }
   catch(err){
-
+    console.log(err)
     res.status(500).json({Error:"Internal Server Error"})
   }
 };

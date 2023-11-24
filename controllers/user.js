@@ -95,6 +95,7 @@ const postLogin = async (req, res) => {
         }
     }
     catch (err) {
+        console.log(err)
         res.status(400).json({ Error: "Bad Parameters, Something Went Wrong." })
     }
 }

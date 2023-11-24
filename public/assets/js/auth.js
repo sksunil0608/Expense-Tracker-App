@@ -15,7 +15,6 @@ async function login(event) {
         const loginDetails = {
         email, password
         }
-        console.log(email,password)
         const response = await axios.post(`${BACKEND_API__URL}/login`, loginDetails);
         clearLoginInputBox();
         if (response.status === 201) {

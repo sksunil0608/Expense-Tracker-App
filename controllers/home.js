@@ -1,11 +1,11 @@
 const path = require('path')
 
-exports.viewIndex = (req,res)=>{
+exports.getIndexView = (req,res)=>{
     return res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 }
-exports.viewAbout = (req, res) => {
+exports.getAboutView = (req, res) => {
     return res.sendFile(path.join(__dirname, '..', 'public', 'about.html'));
 }
-exports.viewContact = (req, res) => {
+exports.getContactView = (req, res) => {
     return res.sendFile(path.join(__dirname, '..', 'public', 'contact.html'));
 }

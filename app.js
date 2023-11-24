@@ -2,23 +2,23 @@ const express = require('express');
 const sequelize =require('./util/database')
 const cors = require("cors");
 const path = require('path')
-const helment = require('helmet')
+const helmet = require('helmet')
 const compression = require('compression')
 const morgan = require('morgan')
 const fs = require('fs')
 const bodyParser = require('body-parser')
 
-const User = require('./models/users')
-const Expense = require('./models/expenses')
-const Order = require('./models/orders')
-const ForgotPassword = require('./models/forgotPassword')
-const DownloadLog = require('./models/downloadLog')
+const User = require('./models/user')
+const Expense = require('./models/expense')
+const Order = require('./models/order')
+const ForgotPassword = require('./models/forgot_password')
+const DownloadLog = require('./models/download_log')
 
 const app= express();
 app.use(cors())
 
 app.use(compression());
-app.use(helment({ contentSecurityPolicy: false ,}));
+app.use(helmet({ contentSecurityPolicy: false ,}));
 
 const accessLogStream = fs.createWriteStream(
     path.join(__dirname,'access.log'),
@@ -32,16 +32,16 @@ app.use(bodyParser.json());
 // Static Middleware
 app.use(express.static(path.join(__dirname, 'public')))
 
-const expenseRoutes = require('./routes/expenses')
-const userRoutes = require('./routes/users')
+const adminRoutes = require('./routes/admin')
+const userRoutes = require('./routes/user')
 const premiumRoutes = require('./routes/premium')
-const premiumFeatureRoutes = require('./routes/premiumFeatures')
-const passwordRoutes = require('./routes/passwordManagement')
+const premiumFeatureRoutes = require('./routes/premium_feature')
+const passwordRoutes = require('./routes/password_management')
 const homeRoutes = require('./routes/home')
 app.use(homeRoutes)
 app.use(userRoutes);
 app.use(passwordRoutes)
-app.use(expenseRoutes);
+app.use(adminRoutes);
 app.use(premiumRoutes);
 app.use(premiumFeatureRoutes)
 

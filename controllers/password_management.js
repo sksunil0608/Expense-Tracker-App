@@ -2,24 +2,24 @@ const uuid = require('uuid')
 const bcrypt = require('bcrypt')
 const path = require('path')
 require('dotenv').config();
-const ForgotPassword = require('../models/forgotPassword')
-const User = require('../models/users')
+const ForgotPassword = require('../models/forgot_password')
+const User = require('../models/user')
 const email = require('../services/email')
 
 const getForgotPasswordView = (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'forget-password.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'forgot-password.html'));
 }
 
 const getResetPasswordView = async (req, res) => {
     try {
         const uuid = req.params.uuid
-        const forgetRequest = await ForgotPassword.findOne({ where: { id: uuid } })
+        const forget_request = await ForgotPassword.findOne({ where: { id: uuid } })
 
-        if (forgetRequest.active === false) {
+        if (forget_request.active === false) {
             return res.status(403).json({ Error: "Reset Link Expired" })
         }
-        if (forgetRequest) {
-            forgetRequest.update({ active: false });
+        if (forget_request) {
+            forget_request.update({ active: false });
             res.sendFile(path.join(__dirname, '..', 'public', 'authentication', 'reset-password.html'));
 
         }
@@ -34,14 +34,14 @@ const postForgotPassword = async (req, res) => {
         const user = await User.findOne({ where: { email: user_email } })
         if (user) {
             const id = uuid.v4()
-            await user.createForgotpassword({ id, active: true })
+            await user.createForgot_password({ id, active: true })
             const msg = {
                 to: user_email,
                 from: process.env.FROM_EMAIL, // Change to your verified sender
                 subject: 'Forgot Password',
                 text: 'You requested a password reset. Please follow the link to reset your password.',
                 html: `<p>You requested a password reset. Please follow the link to reset your password.</p>
-                <a href="http://34.231.139.245/password/resetpassword/${id}">Reset password</a>`,
+                <a href="http://localhost:3000/reset-password/${id}">Reset password</a>`,
             };
             const result = await email.sendEmail(msg)
             if (result.status === 202) {
@@ -49,11 +49,13 @@ const postForgotPassword = async (req, res) => {
             }
         }
         else {
+            
             throw new Error('User Does Not Exist')
         }
 
     }
     catch (err) {
+        console.log(err)
         res.status(500).json({ Error: "Internal Server Error" })
     }
 
@@ -62,13 +64,13 @@ const postForgotPassword = async (req, res) => {
 
 
 
-const postUpdatePassword = async (req,res)=>{
+const resetPassword = async (req,res)=>{
     try{
         const new_passwrod = req.body.password
         const resetId = req.params.uuid
-        const resetRequest = await ForgotPassword.findOne({where:{id:resetId}})
+        const reset_request = await ForgotPassword.findOne({where:{id:resetId}})
     
-        const user = await User.findOne({where:{id:resetRequest.userId}})
+        const user = await User.findOne({where:{id:reset_request.userId}})
         
         if(user){
             const saltrounds = 10;
@@ -101,6 +103,6 @@ module.exports = {
     getForgotPasswordView,
     postForgotPassword,
     getResetPasswordView,
-    postUpdatePassword,
+    resetPassword,
     
 }

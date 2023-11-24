@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const path=require('path')
-const User = require('../models/users')
+const User = require('../models/user')
 
 
 function isInValidString(str) {
@@ -17,22 +17,22 @@ const getSignUpView = (req, res) => {
 
 const postSignUp = async (req, res) => {
     try {
-        const { name: newName, email: newEmail, password: newPass } = req.body;
+        const { name: new_name, email: new_email, password: new_pass } = req.body;
 
-        if (isInValidString(newName) || isInValidString(newEmail) || isInValidString(newPass)) {
+        if (isInValidString(new_name) || isInValidString(new_email) || isInValidString(new_pass)) {
             return res.status(400).json({ err: "Bad Parameters, Please fill details carefully" })
         }
         //Existing User Validation
-        const existingUser = await User.findAll({ where: { email: newEmail } })
+        const existing_user = await User.findAll({ where: { email: new_email } })
 
-        if (existingUser.length == 0) {
+        if (existing_user.length == 0) {
 
-            const saltrounds = 10;
-            bcrypt.hash(newPass, saltrounds, async (err, hash) => {
+            const salt_rounds = 10;
+            bcrypt.hash(new_pass, salt_rounds, async (err, hash) => {
                 if (!err) {
                     const user = await User.create({
-                        name: newName,
-                        email: newEmail,
+                        name: new_name,
+                        email: new_email,
                         password: hash
                     })
                     return res.status(201).json({ Success: "User Created Successfully" })
@@ -54,37 +54,37 @@ const postSignUp = async (req, res) => {
 
 }
 
-const generateAccessToken = (id,name,isPremium) =>{
-    const tokenValues = {
+const generateAccessToken = (id,name,is_premium) =>{
+    const token_value = {
         userId: id,
         name: name,
-        isPremiumUser: isPremium,
+        is_premium_user: is_premium,
     };
-    return jwt.sign(tokenValues, 'secretkey')
+    return jwt.sign(token_value, 'secretkey')
 }
 
 
 const postLogin = async (req, res) => {
     try {
-        const { email: userEmail, password: userPass } = req.body;
-        if (isInValidString(userEmail) || isInValidString(userPass)) {
+        const { email: user_email, password: user_pass } = req.body;
+        if (isInValidString(user_email) || isInValidString(user_pass)) {
             return res.status(400).json({ Error: "You have not filled all the details" })
         }
 
         // Authenticate User
-        const existingUser = await User.findAll({ where: { email: userEmail } })
-        if (existingUser.length == 0) {
+        const existing_user = await User.findAll({ where: { email: user_email } })
+        if (existing_user.length == 0) {
             return res.status(204).json({ Error: "User Does Not Exist! Please Create a Account." })
         }
         else {
-            bcrypt.compare(userPass, existingUser[0].password, (err, result) => {
+            bcrypt.compare(user_pass, existing_user[0].password, (err, result) => {
 
                 if (err) {
                     throw new Error("Error Login")
                 }
                 else {
                     if (result) {
-                        return res.status(201).json({ success: "Successful Login", token: generateAccessToken(existingUser[0].id,existingUser[0].name,existingUser[0].isPremiumUser) })
+                        return res.status(201).json({ success: "Successful Login", token: generateAccessToken(existing_user[0].id,existing_user[0].name,existing_user[0].is_premium_user) })
                     }
                     else {
                         return res.status(401).json({ Error: "Authentication Error! Password Does Not Match." })
@@ -99,10 +99,10 @@ const postLogin = async (req, res) => {
     }
 }
 
-const logout = async (req,res)=>{
+const getLogout = async (req,res)=>{
     try{
         // const user =await User.findByPk(req.user.id);
-        // user.isPremiumUser = false;
+        // user.is_premium_user = false;
         // await user.save();
         res.status(201).json({success:"Logged Out"})
     }catch(err){
@@ -115,7 +115,7 @@ module.exports = {
     postSignUp,
     generateAccessToken,
     postLogin,
-    logout,
+    getLogout,
     getLoginView,
     getSignUpView
 };

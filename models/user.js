@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
 
-const User = sequelize.define('users',{
+const User = sequelize.define('user',{
     id:{
         type:Sequelize.INTEGER,
         allowNull:false,
@@ -22,15 +22,15 @@ const User = sequelize.define('users',{
         type:Sequelize.STRING,
         allowNull:false
     },
-    isPremiumUser:{
+    is_premium_user:{
         type:Sequelize.BOOLEAN,
         allowNull:false,
         defaultValue: false,
     },
-    totalExpenseAmount:{
+    total_expense_amount:{
         type:Sequelize.INTEGER
     },
-    totalExpense: {
+    total_expenses: {
         type: Sequelize.INTEGER
     }
 })

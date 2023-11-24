@@ -16,7 +16,7 @@
 <body>
     <nav class="navbar navbar-expand-lg" style="background-color: lightblue">
         <div class="container">
-            <a href="/admin" class="navbar-brand">Expense Tracker</a>
+            <a href="/admin/dashboard" class="navbar-brand">Expense Tracker</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -37,7 +37,7 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a href="/logout"><button class="dropdown-item bg-transparent border-0" id="logout"><i
+                            <li><a href="/login"><button class="dropdown-item bg-transparent border-0" id="logout"><i
                                             class="fa fa-power-off fa-fw"></i>
                                         Logout</button></a>
                             </li>
@@ -68,12 +68,6 @@
             </div>
             <div class="col-md-2 col" id="">
                 <p class="" id="total-expense"></p>
-            </div>
-            <div class="col-md-1 col" id="normal-user-area">
-                <button class="" id="user-info"><i class="fa fa-user"></i></button>
-            </div>
-            <div class="col-md-1 col" id="normal-user-area">
-                <button class="" id="logout"><i class="fa fa-sign-out"></i></button>
             </div>
         </div>
         <h3 class="text-center mt-5">Day to Day Expenses</h3>
@@ -166,7 +160,7 @@
     </div>
 
     <script>
-        const BACKEND_ADDRESS = 'http://34.231.139.245'
+        const BACKEND_ADDRESS = ''
         const BACKEND_API__URL = BACKEND_ADDRESS ? BACKEND_ADDRESS : 'http://localhost:3000';
         var currentDate = new Date();
         var formattedDate = currentDate.toDateString();
@@ -176,9 +170,9 @@
             try {
 
                 const token = localStorage.getItem('token')
-                const response = await axios.get(`${BACKEND_API__URL}/user/download-history`, { headers: { "Authorization": token } })
+                const response = await axios.get(`${BACKEND_API__URL}/admin/download-history`, { headers: { "Authorization": token } })
                 if (response.status === 201) {
-                    const data = response.data.downloadHistory
+                    const data = response.data.download_history
                     document.getElementById('download-history').classList.remove('d-none');
                     const table = document.getElementById('download-history-table');
                     data.forEach((i) => {
@@ -192,8 +186,8 @@
                         var cell2 = newRow.insertCell(1);
                         var cell3 = newRow.insertCell(2);
 
-                        cell1.innerHTML = i.fileName + '-' + i.updatedAt
-                        cell2.innerHTML = `<a href=${i.fileURL}>${i.fileURL.substring(0, 30) + '...'}</a>`
+                        cell1.innerHTML = i.file_name + '-' + i.updatedAt
+                        cell2.innerHTML = `<a href=${i.file_url}>${i.file_url.substring(0, 30) + '...'}</a>`
                         cell3.innerHTML = i.updatedAt;
                     })
 
@@ -206,7 +200,7 @@
         async function download_report() {
             try {
                 const token = localStorage.getItem('token')
-                const response = await axios.get(`${BACKEND_API__URL}/user/download`, { headers: { "Authorization": token } })
+                const response = await axios.get(`${BACKEND_API__URL}/admin/download`, { headers: { "Authorization": token } })
                 if (response.status === 201) {
                     var download_link = document.createElement('a')
                     download_link.href = response.data.fileURL

@@ -1,10 +1,10 @@
 require('dotenv').config();
 const Razorpay = require('razorpay');
-const Order = require('../models/orders');
-const userController = require('./users')
+const Order = require('../models/order');
+const userController = require('./user')
 exports.getBuyPremium = async (req, res, next) => {
     try {
-        if (req.user.isPremiumUser == true) {
+        if (req.user.is_premium_user == true) {
             return res.status(403).json({ Error: "You are already a premium User" })
         }
         var rzp = new Razorpay({
@@ -19,7 +19,7 @@ exports.getBuyPremium = async (req, res, next) => {
                 throw new Error(JSON.stringify(err));
             }
             try {
-                const newUser = await req.user.createOrder({ order_id: order.id, status: 'PENDING' })
+                const new_user = await req.user.createOrder({ order_id: order.id, status: 'PENDING' })
                 return res.status(201).json({ order, key_id: rzp.key_id })
             }
             catch (err) {
@@ -39,9 +39,9 @@ exports.postTransactionStatus = async (req, res) => {
     try {
         const order_info = await Order.findOne({ where: { order_id: order_id } })
 
-        const userPromise = order_info.update({ payment_id: payment_id, status: "SUCCESS" });
-        const transPromise = req.user.update({ isPremiumUser: true })
-        const [trans_info, user_info] = await Promise.all([userPromise, transPromise])
+        const user_promise = order_info.update({ payment_id: payment_id, status: "SUCCESS" });
+        const trans_promise = req.user.update({ is_premium_user: true })
+        const [trans_info, user_info] = await Promise.all([user_promise, trans_promise])
 
         return res.status(202).json({ success: "Transaction Successful", token: userController.generateAccessToken(req.user.id, req.user.name, true) })
     }

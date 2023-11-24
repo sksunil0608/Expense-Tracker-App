@@ -1,10 +1,10 @@
-const Expense = require('../models/expenses')
-const User = require('../models/users');
+const Expense = require('../models/expense')
+const User = require('../models/user');
 const sequelize = require('../util/database');
 
 exports.getLeaderboard = async (req, res) => {
     try {
-        // const userLeaderboard = await User.findAll({
+        // const user_leaderboard = await User.findAll({
         //     attributes: ['id', 'name', [sequelize.fn('sum', sequelize.col('expenses.price')), 'total_expense']],
         //     include:[
         //         {
@@ -15,13 +15,13 @@ exports.getLeaderboard = async (req, res) => {
         //     group:['id'],
         //     order:[[sequelize.col('total_expense'),"DESC"]]
         // }) 
-        const userLeaderboard = await User.findAll({
-            attributes:['name','totalExpenseAmount'],
-            order:[['totalExpenseAmount','DESC']]
+        const user_leaderboard = await User.findAll({
+            attributes:['name','total_expense_amount'],
+            order:[['total_expense_amount','DESC']]
             
         })
 
-        res.status(200).json({userLeaderboard})
+        res.status(200).json({user_leaderboard})
 
     }
     catch (err) {

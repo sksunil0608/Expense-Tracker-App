@@ -1,4 +1,4 @@
-const BACKEND_ADDRESS = 'http://34.231.139.245'
+const BACKEND_ADDRESS = ''
 const BACKEND_API__URL = BACKEND_ADDRESS || 'http://localhost:3000';
 
 //Navigation
@@ -9,7 +9,7 @@ form.addEventListener("submit", createExpense);
 
 window.addEventListener('DOMContentLoaded', () => {
     const currentPage = sessionStorage.getItem('currentPage') || 1;
-    const selectedItemsPerPage = sessionStorage.getItem('itemsPerPage') || 5;
+    const selectedItemsPerPage = sessionStorage.getItem('items_per_page') || 5;
     getExpenses(currentPage, selectedItemsPerPage);
     
 })
@@ -52,7 +52,7 @@ function premiumUserUI() {
 }
 //Function to Show Expenses
 function showAllExpenses(response) {
-    const data = response.data.allExpenses;
+    const data = response.data.all_expenses;
 
     const table = document.getElementById('table');
     noExpense = document.getElementById('noExpense');
@@ -76,9 +76,9 @@ function showAllExpenses(response) {
             var cell4 = newRow.insertCell(3);
             var cell5 = newRow.insertCell(4);
 
-            cell1.innerHTML = i.expenseName;
-            cell2.innerHTML = i.price;
-            cell3.innerHTML = i.category;
+            cell1.innerHTML = i.expense_name;
+            cell2.innerHTML = i.expense_price;
+            cell3.innerHTML = i.expense_category;
             cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteExpense('${i.id}')">
                                 Delete
                             </button>`;
@@ -89,11 +89,11 @@ function showAllExpenses(response) {
 
     }
 
-    document.getElementById('total-expense').textContent = `Total Expense:${response.data.totalExpense || 0}`
+    document.getElementById('total-expense').textContent = `Total Expense:${response.data.total_expense}`
 }
 
 function showAddedExpense(response) {
-    const data = response.data.allExpenses;
+    const data = response.data.all_expenses;
     // Create a new row
     var tableBody = document.getElementById("table-body");
     var newRow = tableBody.insertRow();
@@ -106,9 +106,9 @@ function showAddedExpense(response) {
     var cell4 = newRow.insertCell(3);
     var cell5 = newRow.insertCell(4);
 
-    cell1.innerHTML = data.expenseName;
-    cell2.innerHTML = data.price;
-    cell3.innerHTML = data.category;
+    cell1.innerHTML = data.expense_name;
+    cell2.innerHTML = data.expense_price;
+    cell3.innerHTML = data.expense_category;
     cell4.innerHTML = ` <button class="btn btn-danger btn-sm input-group-text m-1" onclick="deleteExpense('${data.id}')">
                                 Delete
                             </button>`;
@@ -118,22 +118,22 @@ function showAddedExpense(response) {
 }
 //show edit expense
 function showEditExpense(response) {
-    document.getElementById(`${response.data.allExpenses.id}`).remove();
+    document.getElementById(`${response.data.all_expenses.id}`).remove();
     showAddedExpense(response);
 }
-async function getExpenses(page, itemsPerPage) {
+async function getExpenses(page, items_per_page) {
     const token = localStorage.getItem('token')
     try {
         const decodedToken = parseJwt(token)
-        const isPremium = decodedToken.isPremiumUser
-        if (isPremium) {
+        const is_premium = decodedToken.isPremiumUser
+        if (is_premium) {
             premiumUserUI();
         }
         // Store the current page in local storage
         sessionStorage.setItem('currentPage', page);
-        sessionStorage.setItem('itemsPerPage', itemsPerPage);
+        sessionStorage.setItem('items_per_page', items_per_page);
 
-        const response = await axios.get(`${BACKEND_API__URL}/all-expenses?page=${page}&itemsPerPage=${itemsPerPage}`, { headers: { "Authorization": token } });
+        const response = await axios.get(`${BACKEND_API__URL}/admin/all-expenses?page=${page}&items_per_page=${items_per_page}`, { headers: { "Authorization": token } });
         updatePaginationControls(response)
 
     } catch (err) {
@@ -144,19 +144,19 @@ async function getExpenses(page, itemsPerPage) {
 async function createExpense(event) {
     event.preventDefault();
 
-    const expenseName = event.target.expenseDesc.value;
-    const price = event.target.expenseAmount.value;
-    const category = event.target.expenseCat.value;
+    const expense_name = event.target.expenseDesc.value;
+    const expense_price = event.target.expenseAmount.value;
+    const expense_category = event.target.expenseCat.value;
     const token = localStorage.getItem('token')
     const header = { headers: { "Authorization": token } }
     const obj = {
-        expenseName,
-        price,
-        category,
+        expense_name,
+        expense_price,
+        expense_category,
     }
 
     try {
-        const response = await axios.post(`${BACKEND_API__URL}/add-expense`, obj, header);
+        const response = await axios.post(`${BACKEND_API__URL}/admin/add-expense`, obj, header);
         showAddedExpense(response);
         clearInputBox();
     }
@@ -178,7 +178,7 @@ async function deleteExpense(expenseId) {
     try {
         const token = localStorage.getItem('token')
         const header = { headers: { "Authorization": token } }
-        const response = await axios.delete(`${BACKEND_API__URL}/delete/${expenseId}`, header);
+        const response = await axios.delete(`${BACKEND_API__URL}/admin/delete/${expenseId}`, header);
         removeDeletedExpenseUI(expenseId);
     } catch (err) {
         console.log(err)
@@ -186,16 +186,16 @@ async function deleteExpense(expenseId) {
 }
 
 function showInputDataOnEditpage(response) {
-    const data = response.data.allExpenses
-    document.querySelector("#expenseDesc").value = data.expenseName
-    document.querySelector("#expenseAmount").value = data.price
-    document.querySelector("#expenseCat").value = data.category
+    const data = response.data.all_expenses
+    document.querySelector("#expenseDesc").value = data.expense_name
+    document.querySelector("#expenseAmount").value = data.expense_price
+    document.querySelector("#expenseCat").value = data.expense_category
 }
 //Function to Edit
 async function updateExpense(expenseId) {
     const token = localStorage.getItem('token')
     const header = { headers: { "Authorization": token } }
-    const response = await axios.get(`${BACKEND_API__URL}/expense/${expenseId}`, header);
+    const response = await axios.get(`${BACKEND_API__URL}/admin/expense/${expenseId}`, header);
     showInputDataOnEditpage(response);
 
     const update_btn = document.createElement("div");
@@ -208,20 +208,20 @@ async function updateExpense(expenseId) {
 
     async function postEditData(event) {
         event.preventDefault();
-        const expenseName = document.querySelector("#expenseDesc").value;
-        const price = document.querySelector("#expenseAmount").value;
-        const category = document.querySelector("#expenseCat").value;
+        const expense_name = document.querySelector("#expenseDesc").value;
+        const expense_price = document.querySelector("#expenseAmount").value;
+        const expense_category = document.querySelector("#expenseCat").value;
         const obj = {
-            expenseName,
-            price,
-            category,
+            expense_name,
+            expense_price,
+            expense_category,
         };
 
         try {
             const token = localStorage.getItem('token')
             const header = { headers: { "Authorization": token } }
             const response = await axios.put(
-                `${BACKEND_API__URL}/edit/${expenseId},`,
+                `${BACKEND_API__URL}/admin/edit/${expenseId},`,
                 obj, header
             );
             showEditExpense(response);
@@ -240,7 +240,7 @@ logout_button.onclick = async function logout(e) {
         const token = localStorage.getItem('token')
         await axios.get(`${BACKEND_API__URL}/logout`, { headers: { "Authorization": token } })
         localStorage.removeItem('token')
-        window.location.href = "authentication/login.html"
+        window.location.href = "/login"
 
     } catch (err) {
         console.log(err)
@@ -258,7 +258,7 @@ async function expense_report_view(event) {
             return;
         }
 
-        const response = await axios.get(`${BACKEND_API__URL}/user/expense-report`, {
+        const response = await axios.get(`${BACKEND_API__URL}/admin/expense-report`, {
             headers: { "Authorization": token },
         });
         window.location.href='../../expense-report.html'
@@ -274,7 +274,7 @@ function updatePaginationControls(response) {
     showAllExpenses(response)
     const totalPages = response.data.totalPages
     const currentPage = parseInt(sessionStorage.getItem('currentPage'));
-    const itemsPerPage = sessionStorage.getItem('itemsPerPage');
+    const items_per_page = sessionStorage.getItem('items_per_page');
 
     
     const paginationContainer = document.getElementById('pagination-container');
@@ -288,7 +288,7 @@ function updatePaginationControls(response) {
     previousLink.classList.add('page-link');
     previousLink.addEventListener('click', () => {
         if (currentPage > 1) {
-            getExpenses(currentPage - 1, itemsPerPage);
+            getExpenses(currentPage - 1, items_per_page);
         }
     });
     previousLi.appendChild(previousLink);
@@ -303,7 +303,7 @@ function updatePaginationControls(response) {
         const link = document.createElement('a');
         link.textContent = i;
         link.classList.add('page-link');
-        link.addEventListener('click', () => getExpenses(i, itemsPerPage));
+        link.addEventListener('click', () => getExpenses(i, items_per_page));
 
         if (i === currentPage) {
             li.classList.add('active');
@@ -321,7 +321,7 @@ function updatePaginationControls(response) {
     nextLink.classList.add('page-link');
     nextLink.addEventListener('click', () => {
         if (currentPage < totalPages) {
-            getExpenses(currentPage + 1, itemsPerPage);
+            getExpenses(currentPage + 1, items_per_page);
         }
     });
     nextLi.appendChild(nextLink);

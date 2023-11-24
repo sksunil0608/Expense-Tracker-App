@@ -5,7 +5,7 @@ buy_premium.addEventListener('click', getBuyPremium);
 
 async function showLeaderboard(){
     const token =localStorage.getItem('token')
-    const response = await axios.get(`${BACKEND_API__URL}/premium/leaderboard`,{headers:{"Authorization":token}});
+    const response = await axios.get(`${BACKEND_API__URL}/leaderboard`,{headers:{"Authorization":token}});
 
     const leaderboard_area = document.createElement('div');
     document.getElementById('premium-user-area').appendChild(leaderboard_area);
@@ -36,7 +36,7 @@ async function showLeaderboard(){
         const cell2 = newRow.insertCell(1);
 
         cell1.innerHTML = user.name;
-        cell2.innerHTML = user.totalExpenseAmount!=null?user.totalExpenseAmount:0;
+        cell2.innerHTML = user.total_expense_amount!=null?user.total_expense_amount:0;
     });
 
 

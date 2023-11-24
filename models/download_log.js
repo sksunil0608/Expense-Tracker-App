@@ -1,30 +1,30 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database'); 
 
-const downloadLog = sequelize.define('downloadLogs', {
+const Downloadlog = sequelize.define('download_log', {
     id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    fileName: {
+    file_name: {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    filePath:{
+    file_path:{
         type: Sequelize.STRING,
         allowNull: false,
     },
-    fileURL: {
+    file_url: {
         type: Sequelize.STRING,
         allowNull: false,
     },
-    fileSize: {
+    file_size: {
         type: Sequelize.INTEGER,
     },
-    fileType: {
+    file_type: {
         type: Sequelize.STRING,
     }
 });
 
-module.exports = downloadLog;
+module.exports = Downloadlog;

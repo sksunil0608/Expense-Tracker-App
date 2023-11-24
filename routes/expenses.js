@@ -3,7 +3,7 @@ const UserAuth = require('../middleware/auth')
 const express = require('express');
 
 const router = express.Router();
-router.get('/admin',UserAuth.authenticate,expenseController.viewAdminPage)
+router.get('/admin',expenseController.viewAdminPage)
 
 router.get('/all-expenses', UserAuth.authenticate,expenseController.getExpenses);
 

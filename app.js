@@ -61,10 +61,10 @@ User.hasMany(Order)
 Order.belongsTo(User)
 
 User.hasMany(Forgotpassword);
-ForgotPassword.belongsTo(User)
+Forgotpassword.belongsTo(User)
 
 User.hasMany(Downloadlog)
-DownloadLog.belongsTo(User);
+Downloadlog.belongsTo(User);
 
 
 sequelize.sync().then(()=>{

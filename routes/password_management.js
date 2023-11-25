@@ -9,7 +9,7 @@ router.post('/forgot-password', passwordController.postForgotPassword)
 router.get('/reset-password/:uuid', passwordController.getResetPasswordView)
 
 
-router.use('/update-password/:uuid', passwordController.resetPassword)
+router.post('/reset-password/:uuid', passwordController.resetPassword)
 
 module.exports = router
 

@@ -24,7 +24,7 @@ async function showLeaderboard(){
     </div>
 `;
  
-    response.data.userLeaderboard.forEach((user) => {
+    response.data.user_leaderboard.forEach((user) => {
         const leaderboard_table = document.getElementById('leaderboard-table');
         const leaderboardBody = document.getElementById("leaderboard-body");
 

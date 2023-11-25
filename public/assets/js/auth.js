@@ -1,6 +1,6 @@
 
 const BACKEND_ADDRESS = 'http://34.231.139.245'
-const BACKEND_API__URL = BACKEND_ADDRESS ? BACKEND_ADDRESS : 'https://localhost:3000'; 
+const BACKEND_API__URL = BACKEND_ADDRESS ? BACKEND_ADDRESS : 'http://localhost:3000'; 
 //-------------------------Login--------------------------
 function clearLoginInputBox() {
     document.getElementById('email').value = '';
@@ -12,10 +12,10 @@ async function login(event) {
         const email = event.target.email.value;
         const password = event.target.password.value;
         
-        const loginDetails = {
+        const login_details = {
         email, password
         }
-        const response = await axios.post(`${BACKEND_API__URL}/login`, loginDetails);
+        const response = await axios.post(`${BACKEND_API__URL}/login`, login_details);
         clearLoginInputBox();
         if (response.status === 201) {
             localStorage.setItem('token',response.data.token)
@@ -78,10 +78,10 @@ async function signup(event) {
         const email = event.target.email.value;
         const password = event.target.password.value;
 
-        const signUpDetails = {
+        const signup_details = {
             name, email, password
         }
-        const response = await axios.post(`${BACKEND_API__URL}/signup`, signUpDetails);
+        const response = await axios.post(`${BACKEND_API__URL}/signup`, signup_details);
         clearSignUpInputBox();
         if (response.status == 201) {
             window.location.href = "/login"

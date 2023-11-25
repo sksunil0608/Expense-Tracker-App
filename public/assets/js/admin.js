@@ -1,5 +1,5 @@
 const BACKEND_ADDRESS = 'http://34.231.139.245'
-const BACKEND_API__URL = BACKEND_ADDRESS || 'http://localhost:3000';
+const BACKEND_API__URL = BACKEND_ADDRESS || 'https://localhost:3000';
 
 //Navigation
 

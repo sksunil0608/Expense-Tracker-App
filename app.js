@@ -11,20 +11,21 @@ const bodyParser = require('body-parser')
 const User = require('./models/user')
 const Expense = require('./models/expense')
 const Order = require('./models/order')
-const ForgotPassword = require('./models/forgot_password')
-const DownloadLog = require('./models/download_log')
+const Forgotpassword = require('./models/forgot_password')
+const Downloadlog = require('./models/download_log')
 
 const app= express();
+
 app.use(cors())
 
-app.use(compression());
-app.use(helmet({ contentSecurityPolicy: false ,}));
+// app.use(compression());
+// app.use(helmet({ contentSecurityPolicy: false ,}));
 
-const accessLogStream = fs.createWriteStream(
-    path.join(__dirname,'access.log'),
-    {flags:'a'}
-)
-app.use(morgan('combined',{stream:accessLogStream}));
+// const accessLogStream = fs.createWriteStream(
+//     path.join(__dirname,'access.log'),
+//     {flags:'a'}
+// )
+// app.use(morgan('combined',{stream:accessLogStream}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -59,10 +60,10 @@ Expense.belongsTo(User)
 User.hasMany(Order)
 Order.belongsTo(User)
 
-User.hasMany(ForgotPassword);
+User.hasMany(Forgotpassword);
 ForgotPassword.belongsTo(User)
 
-User.hasMany(DownloadLog)
+User.hasMany(Downloadlog)
 DownloadLog.belongsTo(User);
 
 

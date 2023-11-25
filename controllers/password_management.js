@@ -41,7 +41,7 @@ const postForgotPassword = async (req, res) => {
                 subject: 'Forgot Password',
                 text: 'You requested a password reset. Please follow the link to reset your password.',
                 html: `<p>You requested a password reset. Please follow the link to reset your password.</p>
-                <a href="http://localhost:3000/reset-password/${id}">Reset password</a>`,
+                <a href="http://34.231.139.245/reset-password/${id}">Reset password</a>`,
             };
             const result = await email.sendEmail(msg)
             if (result.status === 202) {
